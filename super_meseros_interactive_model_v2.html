@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Meseros — Modelo Interactivo v3.9 + Pricing v2.5</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="investors.js"></script>
+<script src="mw-header.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#04090f;color:#d4e4f7;font-family:'Inter',system-ui,sans-serif;font-size:13px}
+#dash{background:#04090f;padding:16px;min-height:100vh}
+input[type=range]{width:100%;height:3px;accent-color:#3b82f6;cursor:pointer;background:transparent}
+input[type=range]::-webkit-slider-track{height:3px;background:#162233;border-radius:2px}
+input[type=range]::-webkit-slider-thumb{width:14px;height:14px;background:#3b82f6;border-radius:50%;cursor:pointer;margin-top:-5.5px;-webkit-appearance:none}
+.grp{background:#0b1623;border:1px solid #162233;border-radius:9px;margin-bottom:8px;overflow:hidden}
+.grp-hdr{padding:9px 12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;font-size:11px;font-weight:700;color:#94a8c0;text-transform:uppercase;letter-spacing:0.07em}
+.grp-hdr:hover{background:#0f1e3040}
+.grp-body{padding:0 12px 10px;display:none}
+.grp-body.open{display:block}
+.sl-row{margin-bottom:11px}
+.sl-top{display:flex;justify-content:space-between;margin-bottom:3px}
+.sl-lbl{font-size:10px;color:#4a6480;text-transform:uppercase;letter-spacing:0.07em}
+.sl-val{font-size:11px;font-weight:700;color:#d4e4f7;font-family:'Courier New',monospace}
+.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.tog-lbl{font-size:11px;color:#94a8c0}
+.tog-btn{padding:2px 8px;border-radius:4px;font-size:10px;cursor:pointer;border:1px solid;font-weight:700;transition:all 0.15s}
+.tog-on{border-color:#10b981;background:#10b98120;color:#10b981}
+.tog-off{border-color:#4a6480;background:transparent;color:#4a6480}
+.kpi{background:#0b1623;border-radius:9px;padding:11px 13px;position:relative;overflow:hidden;flex:1;min-width:0}
+.kpi-bar{position:absolute;top:0;left:0;right:0;height:2px;opacity:0.75}
+.kpi-lbl{font-size:9px;color:#4a6480;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:5px}
+.kpi-val{font-size:18px;font-weight:700;font-family:'Courier New',monospace;line-height:1.1}
+.kpi-sub{font-size:9px;color:#4a6480;margin-top:4px}
+.chart-card{background:#0b1623;border:1px solid #162233;border-radius:10px;padding:14px}
+.chart-title{font-size:11px;font-weight:700;color:#94a8c0;margin-bottom:3px}
+.chart-sub{font-size:9px;color:#4a6480;margin-bottom:10px}
+.leg-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:9px;color:#4a6480}
+.leg-sq{width:8px;height:8px;border-radius:2px;display:inline-block;flex-shrink:0}
+.seg-card{background:#0f1e30;border:1px solid #162233;border-radius:8px;padding:10px 12px;flex:1}
+.ue-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #162233}
+.ue-lbl{font-size:10px;color:#4a6480}
+.ue-val{font-size:10px;font-weight:700;font-family:'Courier New',monospace}
+.preset-btn{padding:6px 14px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:0.04em;transition:all 0.15s;border:1px solid}
+.seg-bar-wrap{display:flex;height:22px;border-radius:5px;overflow:hidden;gap:1px;margin-bottom:10px}
+.arpu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-top:1px solid #162233;padding-top:10px;margin-top:10px}
+.arpu-cell{text-align:center}
+.arpu-lbl{font-size:9px;color:#4a6480;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px}
+.arpu-val{font-size:14px;font-weight:700;font-family:'Courier New',monospace}
+
+/* ─── TOP BAR (auth + lang) ─── */
+.mi-topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 14px;margin:-16px -16px 12px;
+  background:#04090fcc;backdrop-filter:blur(8px);
+  border-bottom:1px solid #162233;
+}
+.mi-topbar-left{display:flex;align-items:center;gap:12px;}
+.mi-topbar-right{display:flex;align-items:center;gap:8px;}
+.mi-back{
+  font-size:11px;color:#94a8c0;text-decoration:none;
+  padding:4px 10px;border-radius:6px;
+  transition:background .15s,color .15s;
+}
+.mi-back:hover{color:#d4e4f7;background:#0f1e30;}
+.mi-lang-tog{
+  display:flex;gap:2px;background:#0b1623;border:1px solid #162233;
+  border-radius:100px;padding:2px;
+}
+.mi-lang-btn{
+  padding:3px 10px;font-size:10px;font-weight:700;
+  color:#4a6480;background:transparent;border:none;
+  cursor:pointer;border-radius:100px;letter-spacing:0.06em;
+  font-family:inherit;transition:all .15s;
+}
+.mi-lang-btn.active{background:#1e293b;color:#3b82f6;}
+.mi-lang-btn:hover:not(.active){color:#94a8c0;}
+.mi-logout{
+  padding:3px 10px;font-size:10px;font-weight:700;
+  color:#4a6480;background:transparent;
+  border:1px solid #162233;border-radius:100px;
+  cursor:pointer;font-family:inherit;
+  letter-spacing:0.06em;transition:all .15s;
+}
+.mi-logout:hover{color:#94a8c0;border-color:#3b82f6;}
+
+</style>
+</head>
+<body>
+<div class="mi-topbar">
+  <div class="mi-topbar-left">
+    <a href="financial-models.html" class="mi-back" data-mi-i18n="topbar_back">← Financial Models</a>
+  </div>
+  <div class="mi-topbar-right">
+    <div class="mi-lang-tog">
+      <button class="mi-lang-btn active" data-lang="es" onclick="setMiLang('es')">ES</button>
+      <button class="mi-lang-btn" data-lang="en" onclick="setMiLang('en')">EN</button>
+    </div>
+    <button class="mi-logout" onclick="miLogout()" data-mi-i18n="topbar_logout">Salir</button>
+  </div>
+</div>
+
+<div id="dash">
+
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+  <div>
+    <div style="font-size:19px;font-weight:800;color:#eaf3ff;letter-spacing:-0.03em">Super Meseros <span style="font-size:12px;font-weight:400;color:#4a6480;margin-left:8px" data-mi-i18n="subtitle">Modelo Interactivo v3.9 + Pricing v2.5</span></div>
+    <div style="font-size:10px;color:#4a6480;margin-top:3px" data-mi-i18n="tagline">Simulacion en tiempo real · 60 meses · Segmentacion Light/Standard/Premium · Spinoff de Superlikers</div>
+  </div>
+  <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+    <button class="preset-btn" onclick="loadPreset('pesimista')" id="pb-pes" style="border-color:#ef4444;color:#ef4444;background:transparent" data-mi-i18n="preset_pess">Pesimista</button>
+    <button class="preset-btn" onclick="loadPreset('base')" id="pb-base" style="border-color:#f59e0b;color:#04090f;background:#f59e0b" data-mi-i18n="preset_base">Base</button>
+    <button class="preset-btn" onclick="loadPreset('optimista')" id="pb-opt" style="border-color:#10b981;color:#10b981;background:transparent" data-mi-i18n="preset_opt">Optimista</button>
+    <div style="width:1px;height:20px;background:#162233"></div>
+    <button class="preset-btn" onclick="loadPreset('base')" style="border-color:#162233;color:#4a6480;background:transparent;font-size:10px" data-mi-i18n="reset">Reset</button>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="kpi-row"></div>
+
+<div style="display:flex;gap:14px;align-items:flex-start">
+
+  <!-- LEFT PANEL: Controls -->
+  <div style="width:256px;flex-shrink:0">
+
+    <div class="grp">
+      <div class="grp-hdr" onclick="toggleGrp(this)"><span data-mi-i18n="grp_mix">Mix de Segmentos</span> <span>▾</span></div>
+      <div class="grp-body open">
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_peq">% Pequeños (Light $12)</span><span class="sl-val" id="ov-spq">50%</span></div><input type=range id="sl-spq" min="0" max="100" step="5" value="50" oninput="setSeg('pct_peq',+this.value/100)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_med">% Medianos (Std $25)</span><span class="sl-val" id="ov-spm">35%</span></div><input type=range id="sl-spm" min="0" max="100" step="5" value="35" oninput="setSeg('pct_med',+this.value/100)"></div>
+        <div style="font-size:9px;color:#4a6480;margin-bottom:8px;text-align:center" id="seg-info" data-mi-i18n="seg_info_auto">% Grandes se calcula automáticamente</div>
+        <div style="background:#0f1e30;border-radius:6px;padding:8px 10px;margin-bottom:8px">
+          <div class="sl-top" style="margin-bottom:4px"><span class="sl-lbl" data-mi-i18n="sl_arpu_net">ARPU Neto pond.</span><span class="sl-val" id="ov-arpu-net" style="color:#f59e0b">$16.66</span></div>
+          <div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_mes_pond">Meseros pond./rest</span><span class="sl-val" id="ov-mes-pond" style="color:#a855f7">9.75</span></div>
+        </div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_desc">Descuento por marcas (%)</span><span class="sl-val" id="ov-desc">22.5%</span></div><input type=range id="sl-desc" min="0" max="50" step="0.5" value="22.5" oninput="setP('descuento',+this.value/100);upO('ov-desc',(+this.value).toFixed(1)+'%')"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_upgr">% Upgrade de Plan</span><span class="sl-val" id="ov-upgr">10%</span></div><input type=range id="sl-upgr" min="0" max="40" step="1" value="10" oninput="setP('pct_upgrade',+this.value/100);upO('ov-upgr',this.value+'%')"></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-hdr" onclick="toggleGrp(this)"><span data-mi-i18n="grp_organic">Crecimiento organico</span> <span>▾</span></div>
+      <div class="grp-body open">
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_churn">Churn mensual</span><span class="sl-val" id="ov-churn">3.0%</span></div><input type=range id="sl-churn" min="0.5" max="8" step="0.5" value="3" oninput="setP('churn',+this.value/100);upO('ov-churn',(+this.value).toFixed(1)+'%')"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_dir_f5">Directos/mes (fase 5)</span><span class="sl-val" id="ov-df5">22</span></div><input type=range id="sl-df5" min="3" max="60" step="1" value="22" oninput="setP('dir_f5',+this.value);upO('ov-df5',this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_ref">Referidos / restaurante</span><span class="sl-val" id="ov-ref">2.0</span></div><input type=range id="sl-ref" min="0" max="4" step="0.5" value="2" oninput="setP('referidos',+this.value);upO('ov-ref',(+this.value).toFixed(1))"></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-hdr" onclick="toggleGrp(this)"><span data-mi-i18n="grp_alliances">Alianzas estrategicas</span> <span>▾</span></div>
+      <div class="grp-body open">
+        <div id="tog-area"></div>
+        <div class="sl-row" style="margin-top:8px"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_rms">Rest/mes (grandes)</span><span class="sl-val" id="ov-rms">25</span></div><input type=range id="sl-rms" min="5" max="100" step="5" value="25" oninput="setP('rms_grandes',+this.value);upO('ov-rms',this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_ramp">Ramp-up meses</span><span class="sl-val" id="ov-ramp">18m</span></div><input type=range id="sl-ramp" min="3" max="36" step="3" value="18" oninput="setP('ramp_meses',+this.value);upO('ov-ramp',this.value+'m')"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_caca">CAC alianzas ($/rest)</span><span class="sl-val" id="ov-caca">$60</span></div><input type=range id="sl-caca" min="20" max="150" step="10" value="60" oninput="setP('cac_alianza',+this.value);upO('ov-caca','$'+this.value)"></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-hdr" onclick="toggleGrp(this)"><span data-mi-i18n="grp_sm">Super Monedas</span> <span>▾</span></div>
+      <div class="grp-body">
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_smr">SM compra rest ($/mes/mes.)</span><span class="sl-val" id="ov-smr">$35</span></div><input type=range id="sl-smr" min="5" max="100" step="5" value="35" oninput="setP('sm_rest',+this.value);upO('ov-smr','$'+this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_smm">SM compra marca ($/mes/mes.)</span><span class="sl-val" id="ov-smm">$20</span></div><input type=range id="sl-smm" min="2" max="60" step="2" value="20" oninput="setP('sm_marcas',+this.value);upO('ov-smm','$'+this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_red">% SM redimidas</span><span class="sl-val" id="ov-red">85%</span></div><input type=range id="sl-red" min="50" max="99" step="1" value="85" oninput="setP('pct_redim',+this.value/100);upO('ov-red',this.value+'%')"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_msm">Margen SM sobre redencion</span><span class="sl-val" id="ov-msm">15%</span></div><input type=range id="sl-msm" min="2" max="35" step="1" value="15" oninput="setP('margen_sm',+this.value/100);upO('ov-msm',this.value+'%')"></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="grp-hdr" onclick="toggleGrp(this)"><span data-mi-i18n="grp_costs">Costos y financiero</span> <span>▾</span></div>
+      <div class="grp-body">
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_sop">Soporte / restaurante ($)</span><span class="sl-val" id="ov-sop">$25</span></div><input type=range id="sl-sop" min="5" max="80" step="5" value="25" oninput="setP('soporte_rest',+this.value);upO('ov-sop','$'+this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_rem">Rest / Eng. Manager</span><span class="sl-val" id="ov-rem">90</span></div><input type=range id="sl-rem" min="20" max="200" step="10" value="90" oninput="setP('rest_em',+this.value);upO('ov-rem',this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_rcs">Rest / Customer Success</span><span class="sl-val" id="ov-rcs">65</span></div><input type=range id="sl-rcs" min="15" max="150" step="5" value="65" oninput="setP('rest_cs',+this.value);upO('ov-rcs',this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_opf">Factor OPEX (x base)</span><span class="sl-val" id="ov-opf">1.0x</span></div><input type=range id="sl-opf" min="0.2" max="3" step="0.1" value="1" oninput="setP('opex_factor',+this.value);upO('ov-opf',(+this.value).toFixed(1)+'x')"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_cacd">CAC directo ($/rest)</span><span class="sl-val" id="ov-cacd">$100</span></div><input type=range id="sl-cacd" min="20" max="300" step="10" value="100" oninput="setP('cac_directo',+this.value);upO('ov-cacd','$'+this.value)"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_caj">Caja inicial (USD)</span><span class="sl-val" id="ov-caj">$500K</span></div><input type=range id="sl-caj" min="100000" max="2000000" step="50000" value="500000" oninput="setP('caja_ini',+this.value);upO('ov-caj','$'+Math.round(+this.value/1000)+'K')"></div>
+        <div class="sl-row"><div class="sl-top"><span class="sl-lbl" data-mi-i18n="sl_mul">Multiplo ARR valoracion</span><span class="sl-val" id="ov-mul">5x</span></div><input type=range id="sl-mul" min="1" max="15" step="0.5" value="5" oninput="setP('val_mult',+this.value);upO('ov-mul',(+this.value).toFixed(1)+'x')"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL: Charts & tables -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">
+
+    <!-- Segment Mix Visual -->
+    <div class="chart-card">
+      <div class="chart-title" data-mi-i18n="ct_mix">Mix de Segmentos · Pricing v2.5</div>
+      <div class="chart-sub" data-mi-i18n="cs_mix">Distribución Light / Standard / Premium — ajusta los sliders a la izquierda</div>
+      <div class="seg-bar-wrap" id="seg-bar"></div>
+      <div style="display:flex;gap:8px" id="seg-cards"></div>
+      <div class="arpu-grid" id="arpu-grid"></div>
+    </div>
+
+    <!-- Charts row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="chart-card">
+        <div class="chart-title" data-mi-i18n="ct_pl">P&amp;L anual · Ingresos, EBITDA, Caja</div>
+        <div class="chart-sub" data-mi-i18n="cs_pl">USD · 5 años · Pricing v2.5</div>
+        <div class="leg-row">
+          <span class="leg-item"><span class="leg-sq" style="background:#3b82f6"></span><span data-mi-i18n="leg_revenue">Ingresos</span></span>
+          <span class="leg-item"><span class="leg-sq" style="background:#10b981"></span><span data-mi-i18n="leg_ebpos">EBITDA+</span></span>
+          <span class="leg-item"><span class="leg-sq" style="background:#ef4444"></span><span data-mi-i18n="leg_ebneg">EBITDA-</span></span>
+          <span class="leg-item"><span style="width:14px;height:2px;background:#a855f7;display:inline-block"></span><span data-mi-i18n="leg_cash">Caja</span></span>
+        </div>
+        <div style="position:relative;height:185px"><canvas id="chart1"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-mi-i18n="ct_rest_seg">Restaurantes por segmento + ARR · 60 meses</div>
+        <div class="chart-sub" data-mi-i18n="cs_rest_seg">Pequeños · Medianos · Grandes (barras) · ARR (línea)</div>
+        <div class="leg-row">
+          <span class="leg-item"><span class="leg-sq" style="background:#3b82f6"></span>Light</span>
+          <span class="leg-item"><span class="leg-sq" style="background:#f59e0b"></span>Standard</span>
+          <span class="leg-item"><span class="leg-sq" style="background:#a855f7"></span>Premium</span>
+          <span class="leg-item"><span style="width:14px;height:2px;background:#f59e0b;display:inline-block"></span>ARR</span>
+        </div>
+        <div style="position:relative;height:185px"><canvas id="chart2"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Sensitivity + UE -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:12px">
+      <div class="chart-card">
+        <div class="chart-title" data-mi-i18n="ct_sens">Sensibilidad EBITDA 60m · Churn vs ARPU Neto</div>
+        <div class="chart-sub" style="margin-bottom:8px" data-mi-i18n="cs_sens">Borde blanco = posicion actual</div>
+        <div id="sens-table" style="overflow-x:auto"></div>
+        <div style="font-size:9px;color:#4a6480;margin-top:6px;display:flex;gap:10px">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#10b981;display:inline-block"></span>&gt;$5M</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;display:inline-block"></span>$0-$5M</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;display:inline-block"></span>&lt;$0</span>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-mi-i18n="ct_ue">Unit economics · 1 restaurante</div>
+        <div class="chart-sub" style="margin-bottom:8px" data-mi-i18n="cs_ue">Con parametros actuales · Mes 12</div>
+        <div id="ue-panel"></div>
+        <div style="border-top:1px solid #162233;margin-top:6px;padding-top:6px">
+          <div style="font-size:9px;color:#4a6480;text-transform:uppercase;margin-bottom:4px" data-mi-i18n="ue_scale_arr">Escalamiento ARR</div>
+          <div id="ue-scale" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail table -->
+    <div class="chart-card">
+      <div class="chart-title" data-mi-i18n="ct_detail">Proyeccion detallada por año</div>
+      <div style="overflow-x:auto;margin-top:6px"><table style="width:100%;border-collapse:collapse;font-size:10px" id="detail-table"></table></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   i18n system for the Interactive Model
+   ═══════════════════════════════════════════════════════ */
+const I18N = {
+  es: {
+    topbar_back: "← Financial Models",
+    topbar_logout: "Salir",
+    subtitle: "Modelo Interactivo v3.9 + Pricing v2.5",
+    tagline: "Simulacion en tiempo real · 60 meses · Segmentacion Light/Standard/Premium · Spinoff de Superlikers",
+    preset_pess: "Pesimista",
+    preset_base: "Base",
+    preset_opt: "Optimista",
+    reset: "Reset",
+    grp_mix: "Mix de Segmentos",
+    grp_organic: "Crecimiento orgánico",
+    grp_alliances: "Alianzas estratégicas",
+    grp_sm: "Super Monedas",
+    grp_costs: "Costos y financiero",
+    sl_peq: "% Pequeños (Light $12)",
+    sl_med: "% Medianos (Std $25)",
+    sl_arpu_net: "ARPU Neto pond.",
+    sl_mes_pond: "Meseros pond./rest",
+    sl_desc: "Descuento por marcas (%)",
+    sl_upgr: "% Upgrade de Plan",
+    sl_churn: "Churn mensual",
+    sl_dir_f5: "Directos/mes (fase 5)",
+    sl_ref: "Referidos / restaurante",
+    sl_rms: "Rest/mes (grandes)",
+    sl_ramp: "Ramp-up meses",
+    sl_caca: "CAC alianzas ($/rest)",
+    sl_smr: "SM compra rest ($/mes/mes.)",
+    sl_smm: "SM compra marca ($/mes/mes.)",
+    sl_red: "% SM redimidas",
+    sl_msm: "Margen SM sobre redención",
+    sl_sop: "Soporte / restaurante ($)",
+    sl_rem: "Rest / Eng. Manager",
+    sl_rcs: "Rest / Customer Success",
+    sl_opf: "Factor OPEX (x base)",
+    sl_cacd: "CAC directo ($/rest)",
+    sl_caj: "Caja inicial (USD)",
+    sl_mul: "Múltiplo ARR valoración",
+    seg_info_auto: "% Grandes se calcula automáticamente",
+    seg_info_large: "Grandes",
+    seg_small: "Pequeño",
+    seg_small_plural: "Pequeños",
+    seg_medium: "Mediano",
+    seg_medium_plural: "Medianos",
+    seg_large: "Grande",
+    seg_large_plural: "Grandes",
+    waiters_word: "meseros",
+    ct_mix: "Mix de Segmentos · Pricing v2.5",
+    cs_mix: "Distribución Light / Standard / Premium — ajusta los sliders a la izquierda",
+    ct_pl: "P&L anual · Ingresos, EBITDA, Caja",
+    cs_pl: "USD · 5 años · Pricing v2.5",
+    ct_rest_seg: "Restaurantes por segmento + ARR · 60 meses",
+    cs_rest_seg: "Pequeños · Medianos · Grandes (barras) · ARR (línea)",
+    ct_sens: "Sensibilidad EBITDA 60m · Churn vs ARPU Neto",
+    cs_sens: "Borde blanco = posición actual",
+    ct_ue: "Unit economics · 1 restaurante",
+    cs_ue: "Con parámetros actuales · Mes 12",
+    ct_detail: "Proyección detallada por año",
+    leg_revenue: "Ingresos",
+    leg_ebpos: "EBITDA+",
+    leg_ebneg: "EBITDA-",
+    leg_cash: "Caja",
+    arpu_gross: "ARPU Bruto pond.",
+    arpu_disc: "Descuento marcas",
+    arpu_net: "ARPU Neto pond.",
+    arpu_upgr: "Upgrade pond.",
+    arpu_gross_short: "Bruto",
+    arpu_disc_short: "Desc",
+    kpi_rev_total: "Ingresos totales (60m)",
+    kpi_ebitda_cum: "EBITDA acumulado (60m)",
+    kpi_cash_final: "Caja final (mes 60)",
+    kpi_rest_60: "Restaurantes mes 60",
+    kpi_val_pre: "Valoración pre-money",
+    kpi_val_post: "Post",
+    kpi_dilution: "Dilución",
+    kpi_margin_y5: "Margen EBITDA Año 5",
+    kpi_ebitda_pos: "Mes EBITDA positivo",
+    delta_vs_base: "Delta vs base",
+    year_short: "A",
+    year_short2: "año",
+    month_short: "Mes",
+    rest_short: "rest",
+    sens_hdr: "Churn/ARPUn",
+    ue_oneoff: "One-off (setup+entry)",
+    ue_saas: "SaaS Neto pond./mes",
+    ue_fee_upgr: "Fee Upgrade pond./mes",
+    ue_sm_gross: "SM bruto/mes",
+    ue_sm_cost: "  Redención (costo)",
+    ue_sm_net: "SM neto/mes",
+    ue_arr_1: "ARR (1 restaurante)",
+    ue_total_cost: "Costo total/rest/mes",
+    ue_margin: "Margen bruto/rest/mes",
+    ue_scale_arr: "Escalamiento ARR",
+    no_rest_m12: "Sin restaurantes en mes 12",
+    th_year: "Año",
+    th_rev: "Ingresos",
+    th_costs: "Costos Dir.",
+    th_upgr: "Fee Upgrade",
+    th_net: "U. Neta",
+    th_cash: "Caja",
+    th_rest: "Rest.",
+    total: "TOTAL",
+  },
+  en: {
+    topbar_back: "← Financial Models",
+    topbar_logout: "Log out",
+    subtitle: "Interactive Model v3.9 + Pricing v2.5",
+    tagline: "Real-time simulation · 60 months · Light/Standard/Premium segmentation · Spinoff of Superlikers",
+    preset_pess: "Pessimistic",
+    preset_base: "Base",
+    preset_opt: "Optimistic",
+    reset: "Reset",
+    grp_mix: "Segment mix",
+    grp_organic: "Organic growth",
+    grp_alliances: "Strategic alliances",
+    grp_sm: "Super Monedas",
+    grp_costs: "Costs & financial",
+    sl_peq: "% Small (Light $12)",
+    sl_med: "% Medium (Std $25)",
+    sl_arpu_net: "Weighted Net ARPU",
+    sl_mes_pond: "Weighted waiters/rest",
+    sl_desc: "Brand discount (%)",
+    sl_upgr: "% Plan upgrade",
+    sl_churn: "Monthly churn",
+    sl_dir_f5: "Direct/mo (phase 5)",
+    sl_ref: "Referrals / restaurant",
+    sl_rms: "Rest/mo (large)",
+    sl_ramp: "Ramp-up months",
+    sl_caca: "Alliance CAC ($/rest)",
+    sl_smr: "SM rest purchase ($/waiter/mo)",
+    sl_smm: "SM brand purchase ($/waiter/mo)",
+    sl_red: "% SM redeemed",
+    sl_msm: "SM margin on redemption",
+    sl_sop: "Support / restaurant ($)",
+    sl_rem: "Rest / Eng. Manager",
+    sl_rcs: "Rest / Customer Success",
+    sl_opf: "OPEX factor (x base)",
+    sl_cacd: "Direct CAC ($/rest)",
+    sl_caj: "Initial cash (USD)",
+    sl_mul: "ARR valuation multiple",
+    seg_info_auto: "% Large is calculated automatically",
+    seg_info_large: "Large",
+    seg_small: "Small",
+    seg_small_plural: "Small",
+    seg_medium: "Medium",
+    seg_medium_plural: "Medium",
+    seg_large: "Large",
+    seg_large_plural: "Large",
+    waiters_word: "waiters",
+    ct_mix: "Segment Mix · Pricing v2.5",
+    cs_mix: "Light / Standard / Premium distribution — adjust sliders on the left",
+    ct_pl: "Annual P&L · Revenue, EBITDA, Cash",
+    cs_pl: "USD · 5 years · Pricing v2.5",
+    ct_rest_seg: "Restaurants by segment + ARR · 60 months",
+    cs_rest_seg: "Small · Medium · Large (bars) · ARR (line)",
+    ct_sens: "60m EBITDA sensitivity · Churn vs Net ARPU",
+    cs_sens: "White border = current position",
+    ct_ue: "Unit economics · 1 restaurant",
+    cs_ue: "With current parameters · Month 12",
+    ct_detail: "Detailed projection by year",
+    leg_revenue: "Revenue",
+    leg_ebpos: "EBITDA+",
+    leg_ebneg: "EBITDA-",
+    leg_cash: "Cash",
+    arpu_gross: "Weighted Gross ARPU",
+    arpu_disc: "Brand discount",
+    arpu_net: "Weighted Net ARPU",
+    arpu_upgr: "Weighted Upgrade",
+    arpu_gross_short: "Gross",
+    arpu_disc_short: "Disc",
+    kpi_rev_total: "Total revenue (60m)",
+    kpi_ebitda_cum: "Cumulative EBITDA (60m)",
+    kpi_cash_final: "Final cash (month 60)",
+    kpi_rest_60: "Restaurants at month 60",
+    kpi_val_pre: "Pre-money valuation",
+    kpi_val_post: "Post",
+    kpi_dilution: "Dilution",
+    kpi_margin_y5: "EBITDA margin Year 5",
+    kpi_ebitda_pos: "EBITDA-positive month",
+    delta_vs_base: "Delta vs base",
+    year_short: "Y",
+    year_short2: "yr",
+    month_short: "Month",
+    rest_short: "rest",
+    sens_hdr: "Churn/ARPUn",
+    ue_oneoff: "One-off (setup+entry)",
+    ue_saas: "Weighted Net SaaS/mo",
+    ue_fee_upgr: "Weighted Upgrade fee/mo",
+    ue_sm_gross: "SM gross/mo",
+    ue_sm_cost: "  Redemption (cost)",
+    ue_sm_net: "SM net/mo",
+    ue_arr_1: "ARR (1 restaurant)",
+    ue_total_cost: "Total cost/rest/mo",
+    ue_margin: "Gross margin/rest/mo",
+    ue_scale_arr: "ARR scaling",
+    no_rest_m12: "No restaurants in month 12",
+    th_year: "Year",
+    th_rev: "Revenue",
+    th_costs: "Direct Costs",
+    th_upgr: "Upgrade Fee",
+    th_net: "Net Inc.",
+    th_cash: "Cash",
+    th_rest: "Rest.",
+    total: "TOTAL",
+  }
+};
+
+let currentLang = (typeof localStorage !== 'undefined' && localStorage.getItem('mw_lang')) || 'es';
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.es[key] || key;
+}
+
+function setMiLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mw_lang', lang);
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.lang = lang;
+  /* Update lang toggle buttons */
+  document.querySelectorAll('.mi-lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang)
+  );
+  /* Apply static translations */
+  document.querySelectorAll('[data-mi-i18n]').forEach(el => {
+    const key = el.dataset.miI18n;
+    const val = t(key);
+    if (val) el.textContent = val;
+  });
+  /* Rebuild charts with new dataset labels */
+  if (c1 && c2) {
+    c1.data.datasets[0].label = t('leg_revenue');
+    c1.data.datasets[1].label = 'EBITDA';
+    c1.data.datasets[2].label = t('leg_cash');
+    c2.data.datasets[0].label = t('seg_small_plural');
+    c2.data.datasets[1].label = t('seg_medium_plural');
+    c2.data.datasets[2].label = t('seg_large_plural');
+    c1.update('none');
+    c2.update('none');
+  }
+  /* Re-render everything that uses dynamic strings */
+  if (typeof update === 'function') update();
+}
+
+/* Auth check (redirects to gate if not authenticated) */
+mwRequireAuth({ requireTier: "materials" });
+
+function miLogout() {
+  mwClearSession();
+  window.location.href = 'financial-access.html';
+}
+
+/* ─── PRESETS Pricing v2.5 ─── */
+const PRESETS = {
+  pesimista: {
+    churn:.05,dir_f1:2,dir_f2:4,dir_f3:8,dir_f4:14,dir_f5:20,referidos:2,
+    cc_on:true,aco_on:true,bav_on:false,fem_on:false,ccf_on:false,
+    rms_grandes:30,ramp_meses:24,cac_alianza:60,
+    pct_peq:.70,pct_med:.25,descuento:.112,pct_upgrade:.05,
+    meseros_peq:5,meseros_med:10,meseros_gra:25,
+    arpu_peq:12,arpu_med:25,arpu_gra:45,
+    marcas_rest:1,setup_fee:500,entry_fee:300,
+    sm_rest:25,sm_marcas:10,pct_redim:.90,margen_sm:.10,
+    soporte_rest:30,rest_em:75,rest_cs:50,opex_factor:.46,opex_crecim:.15,
+    cac_directo:100,caja_ini:500000,licencia:5000,val_mult:5
+  },
+  base: {
+    churn:.03,dir_f1:3,dir_f2:5,dir_f3:9,dir_f4:15,dir_f5:22,referidos:2,
+    cc_on:true,aco_on:true,bav_on:false,fem_on:false,ccf_on:false,
+    rms_grandes:30,ramp_meses:18,cac_alianza:60,
+    pct_peq:.50,pct_med:.35,descuento:.225,pct_upgrade:.10,
+    meseros_peq:5,meseros_med:10,meseros_gra:25,
+    arpu_peq:12,arpu_med:25,arpu_gra:45,
+    marcas_rest:2,setup_fee:500,entry_fee:300,
+    sm_rest:35,sm_marcas:20,pct_redim:.85,margen_sm:.15,
+    soporte_rest:25,rest_em:90,rest_cs:65,opex_factor:1,opex_crecim:.10,
+    cac_directo:100,caja_ini:500000,licencia:5000,val_mult:5
+  },
+  optimista: {
+    churn:.02,dir_f1:3,dir_f2:6,dir_f3:10,dir_f4:18,dir_f5:27,referidos:2,
+    cc_on:true,aco_on:true,bav_on:true,fem_on:true,ccf_on:true,
+    rms_grandes:95,ramp_meses:12,cac_alianza:60,
+    pct_peq:.35,pct_med:.35,descuento:.336,pct_upgrade:.20,
+    meseros_peq:5,meseros_med:10,meseros_gra:25,
+    arpu_peq:12,arpu_med:25,arpu_gra:45,
+    marcas_rest:3,setup_fee:500,entry_fee:300,
+    sm_rest:50,sm_marcas:25,pct_redim:.80,margen_sm:.15,
+    soporte_rest:20,rest_em:100,rest_cs:80,opex_factor:2,opex_crecim:.08,
+    cac_directo:100,caja_ini:500000,licencia:5000,val_mult:5
+  },
+};
+
+let P = {...PRESETS.base};
+const BASE = {...PRESETS.base};
+
+const ALIANZAS=[
+  {id:'cc_on',lbl:'Coca-Cola Colombia',mes_act:6,pip:5000},
+  {id:'aco_on',lbl:'ACODRES',mes_act:6,pip:12000},
+  {id:'bav_on',lbl:'Bavaria Colombia',mes_act:12,pip:4500},
+  {id:'fem_on',lbl:'FEMSA Mexico',mes_act:24,pip:50000},
+  {id:'ccf_on',lbl:'CC Florida USA',mes_act:36,pip:5000},
+];
+
+function setP(k,v){P[k]=v;update()}
+function upO(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function toggleGrp(el){el.nextElementSibling.classList.toggle('open');el.querySelector('span').textContent=el.nextElementSibling.classList.contains('open')?'▾':'▸'}
+
+/* Segment sliders sync */
+function setSeg(k,v){
+  P[k]=v;
+  const peq=P.pct_peq, med=P.pct_med;
+  const gra=Math.max(0,1-peq-med);
+  P.pct_gra=gra;
+  upO('ov-spq',Math.round(peq*100)+'%');
+  upO('ov-spm',Math.round(med*100)+'%');
+  if(k==='pct_peq') document.getElementById('sl-spq').value=peq*100;
+  if(k==='pct_med') document.getElementById('sl-spm').value=med*100;
+  updateArpuPond();
+  update();
+}
+
+function updateArpuPond(){
+  const peq=P.pct_peq, med=P.pct_med, gra=Math.max(0,1-peq-med);
+  const arpuBruto=peq*P.arpu_peq+med*P.arpu_med+gra*P.arpu_gra;
+  const arpuNeto=arpuBruto*(1-P.descuento);
+  const meserosPond=peq*P.meseros_peq+med*P.meseros_med+gra*P.meseros_gra;
+  P._arpuNeto=arpuNeto; P._meserosPond=meserosPond; P._arpuBruto=arpuBruto;
+  P._pctGra=gra;
+  upO('ov-arpu-net','$'+arpuNeto.toFixed(2));
+  upO('ov-mes-pond',meserosPond.toFixed(2));
+  upO('seg-info',`${t('seg_info_large')}: ${Math.round(gra*100)}%`);
+}
+
+function fmtM(v){const a=Math.abs(v);if(a>=1e9)return(v<0?'-':'')+'$'+(a/1e9).toFixed(2)+'B';if(a>=1e6)return(v<0?'-':'')+'$'+(a/1e6).toFixed(2)+'M';if(a>=1e3)return(v<0?'-':'')+'$'+(a/1e3).toFixed(0)+'K';return(v<0?'-':'')+'$'+Math.abs(Math.round(v))}
+function fmtMn(v){const a=Math.abs(v);if(a>=1e6)return(v<0?'-':'')+(a/1e6).toFixed(1)+'M';if(a>=1e3)return(v<0?'-':'')+(a/1e3).toFixed(0)+'K';return Math.round(v)+''}
+
+/* ─── SIMULATION ENGINE v2.5 ─── */
+function simulate(p){
+  const TEAM_BASE=32500,EM_SAL=1750,CS_SAL=1000,PROV=0.025,PAST=0.035,TAX=0.35;
+  /* Compute derived segment params */
+  const peq=p.pct_peq||0.5, med=p.pct_med||0.35, gra=Math.max(0,1-peq-med);
+  const arpuBruto=peq*(p.arpu_peq||12)+med*(p.arpu_med||25)+gra*(p.arpu_gra||45);
+  const arpuNeto=arpuBruto*(1-(p.descuento||0.225));
+  const meserosPond=peq*(p.meseros_peq||5)+med*(p.meseros_med||10)+gra*(p.meseros_gra||25);
+
+  let rest=0,caja=p.caja_ini,stepUps=0,prevSem=0;
+  const pips=ALIANZAS.map(a=>({...a,on:p[a.id],
+    rms:a.id==='ccf_on'?Math.round(p.rms_grandes*0.4):p.rms_grandes,used:0}));
+  const freeGrants=[];
+  const res=[];
+
+  for(let m=1;m<=60;m++){
+    let dir;if(m<=3)dir=p.dir_f1;else if(m<=6)dir=p.dir_f2;else if(m<=12)dir=p.dir_f3;else if(m<=24)dir=p.dir_f4;else dir=p.dir_f5;
+    let ali=0;
+    for(const a of pips){
+      if(!a.on||m<a.mes_act)continue;
+      const act=m-a.mes_act+1;
+      const rampF=Math.min(1,act/p.ramp_meses);
+      const tgt=Math.round(a.rms*rampF);
+      const avail=Math.max(0,a.pip-a.used);
+      const actual=Math.min(tgt,avail);
+      ali+=actual;a.used+=actual;
+    }
+    const p1=res[m-2],p2=res[m-3];
+    const ref1=p1?Math.round((p1.dirN+p1.aliN)*(p.referidos/2)):0;
+    const ref2=p2?Math.round((p2.dirN+p2.aliN)*(p.referidos/2)):0;
+    const nuevos=dir+ali+ref1+ref2;
+    const churnN=Math.round(rest*p.churn);
+    rest=Math.max(0,rest+nuevos-churnN);
+
+    const mAct=rest*meserosPond;  /* UPDATED: uses weighted meseros */
+    const marcas=Math.max(1,p.marcas_rest*Math.pow(1.01,m-1));
+
+    /* INGRESOS: ARPU Neto ponderado replaces flat arpu_rest */
+    const iSetup=nuevos*p.setup_fee;
+    const iEntry=nuevos*Math.max(0,marcas-1)*p.entry_fee;
+    const iSaasR=mAct*arpuNeto;   /* UPDATED: arpuNeto includes marcas discount */
+    const iSaasM=mAct*(p.arpu_marcas||0)*marcas*0; /* Merged into arpuNeto — zero here */
+    const iUpgrade=rest*(p.pct_upgrade||0.10)*50;  /* NEW: Fee Upgrade de Plan */
+    const smBruto=mAct*(p.sm_rest+p.sm_marcas*marcas);
+    const smRed=smBruto*p.pct_redim;
+    const iSm=smBruto;
+    const ing=iSetup+iEntry+iSaasR+iUpgrade+iSm;
+
+    const cIncent=mAct*3;
+    const cReden=smRed*(1-p.margen_sm);
+    const cHost=mAct*0.5;
+    const cSop=rest*p.soporte_rest;
+    const cCom=mAct*1;
+    const nEm=Math.ceil(Math.max(1,rest)/p.rest_em);
+    const nCs=Math.ceil(Math.max(1,rest)/p.rest_cs);
+    const cGala=1667+Math.floor(m/12)*100;
+    const cProv=smBruto*PROV;
+    const cPast=ing*PAST;
+    const gratisNew=Math.round((ref1+ref2)*meserosPond*0.1);
+    freeGrants.push(gratisNew);
+    const gratisActive=freeGrants.slice(-12).reduce((s,x)=>s+x,0);
+    const cRefDesc=gratisActive*arpuNeto;
+    const costos=cIncent+cReden+cHost+cSop+cCom+nEm*EM_SAL+nCs*CS_SAL+cGala+200+cProv+cPast+cRefDesc;
+
+    const cCacD=dir*p.cac_directo;
+    const cCacA=ali*p.cac_alianza;
+    const cComis=nuevos*25;
+    const cPubli=m>=13?ing*0.05:0;
+    const cac=cCacD+cCacA+cComis+cPubli;
+
+    const curSem=Math.ceil(m/6);
+    if(curSem>prevSem&&prevSem>0){const last6=res.slice(-6);if(last6.reduce((s,x)=>s+x.ebitda,0)>0)stepUps++;}
+    prevSem=curSem;
+    const opexM=Math.pow(1+p.opex_crecim,stepUps);
+    const opExEq=TEAM_BASE*p.opex_factor*opexM;
+    const ger=Math.min(15000,3000+Math.max(0,Math.floor(rest/100))*1000);
+    const opex=opExEq+ger+p.licencia;
+
+    const ebitda=ing-costos-cac-opex;
+    const tax=ebitda>0?ebitda*TAX:0;
+    const uneta=ebitda-tax;
+    caja+=uneta;
+
+    res.push({m,rest:Math.round(rest),mAct:Math.round(mAct),
+      ing:Math.round(ing),costos:Math.round(costos),cac:Math.round(cac),
+      opex:Math.round(opex),ebitda:Math.round(ebitda),uneta:Math.round(uneta),
+      caja:Math.round(caja),arr:Math.round(ing*12),
+      dirN:dir,aliN:ali,refN:ref1+ref2,
+      smBruto:Math.round(smBruto),smNeto:Math.round(smBruto-cReden),
+      iUpgrade:Math.round(iUpgrade),iSaas:Math.round(iSaasR),
+      restPeq:Math.round(rest*peq),restMed:Math.round(rest*med),restGra:Math.round(rest*gra)
+    });
+  }
+  return res;
+}
+
+function annual(mo){
+  return[0,1,2,3,4].map(yr=>{
+    const sl=mo.slice(yr*12,(yr+1)*12);const last=sl[sl.length-1];
+    return{y:`A${yr+1}`,ing:sl.reduce((s,x)=>s+x.ing,0),
+      ebitda:sl.reduce((s,x)=>s+x.ebitda,0),uneta:sl.reduce((s,x)=>s+x.uneta,0),
+      caja:last.caja,rest:last.rest,arr:last.arr,
+      costos:sl.reduce((s,x)=>s+x.costos,0),cac:sl.reduce((s,x)=>s+x.cac,0),
+      opex:sl.reduce((s,x)=>s+x.opex,0),iUpgrade:sl.reduce((s,x)=>s+x.iUpgrade,0)};
+  });
+}
+
+let c1,c2;
+function initCharts(){
+  c1=new Chart(document.getElementById('chart1').getContext('2d'),{
+    type:'bar',data:{labels:['A1','A2','A3','A4','A5'],datasets:[
+      {label:t('leg_revenue'),data:[],backgroundColor:'#3b82f680',borderRadius:2},
+      {label:'EBITDA',data:[],backgroundColor:[],borderRadius:2},
+      {type:'line',label:'Caja',data:[],borderColor:'#a855f7',pointBackgroundColor:'#a855f7',borderWidth:2,pointRadius:3,tension:0.3,yAxisID:'y2'}
+    ]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:120},
+      plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#4a6480',font:{size:9}},grid:{color:'#16223340'}},
+        y:{ticks:{color:'#4a6480',font:{size:9},callback:fmtMn},grid:{color:'#16223340'}},
+        y2:{position:'right',ticks:{color:'#a855f7',font:{size:9},callback:fmtMn},grid:{display:false}}}}
+  });
+  c2=new Chart(document.getElementById('chart2').getContext('2d'),{
+    type:'bar',data:{labels:[],datasets:[
+      {label:t('seg_small'),data:[],backgroundColor:'#3b82f660',borderRadius:0,stack:'s'},
+      {label:t('seg_medium_plural'),data:[],backgroundColor:'#f59e0b60',borderRadius:0,stack:'s'},
+      {label:t('seg_large_plural'),data:[],backgroundColor:'#a855f760',borderRadius:0,stack:'s'},
+      {type:'line',label:'ARR',data:[],borderColor:'#f59e0b',pointBackgroundColor:'#f59e0b',
+       borderWidth:2,pointRadius:0,tension:0.3,yAxisID:'y2',stack:undefined},
+    ]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:80},
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{stacked:true,ticks:{color:'#4a6480',font:{size:8},
+          callback:(v,i,d)=>{const m=d[i].value;return m%12===0?`M${m}`:''}},grid:{color:'#16223320'}},
+        y:{stacked:true,ticks:{color:'#4a6480',font:{size:9}},grid:{color:'#16223340'}},
+        y2:{position:'right',ticks:{color:'#f59e0b',font:{size:9},callback:(v)=>{const a=Math.abs(v);if(a>=1e6)return(v<0?'-':'')+(a/1e6).toFixed(1)+'M';if(a>=1e3)return(v<0?'-':'')+(a/1e3).toFixed(0)+'K';return Math.round(v)+''}},grid:{display:false}}
+      }}
+  });
+}
+
+function buildToggles(){
+  document.getElementById('tog-area').innerHTML=ALIANZAS.map(a=>
+    `<div class="tog-row"><span class="tog-lbl">${a.lbl}</span>
+     <button class="tog-btn ${P[a.id]?'tog-on':'tog-off'}" id="tb-${a.id}" onclick="flipTog('${a.id}')">${P[a.id]?'ON':'OFF'}</button></div>`
+  ).join('');
+}
+function flipTog(id){P[id]=!P[id];const btn=document.getElementById('tb-'+id);btn.className='tog-btn '+(P[id]?'tog-on':'tog-off');btn.textContent=P[id]?'ON':'OFF';update()}
+
+function updatePresetBtns(){
+  document.getElementById('pb-pes').style.cssText='border-color:#ef4444;color:#ef4444;background:transparent';
+  document.getElementById('pb-base').style.cssText='border-color:#f59e0b;color:#f59e0b;background:transparent';
+  document.getElementById('pb-opt').style.cssText='border-color:#10b981;color:#10b981;background:transparent';
+}
+
+function loadPreset(name){
+  P={...PRESETS[name]};
+  updatePresetBtns();
+  const col=name==='pesimista'?'#ef4444':name==='base'?'#f59e0b':'#10b981';
+  const pr=name==='pesimista'?'pb-pes':name==='base'?'pb-base':'pb-opt';
+  document.getElementById(pr).style.cssText=`border-color:${col};color:#04090f;background:${col}`;
+  const sl=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v};
+  const ov=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  sl('sl-spq',P.pct_peq*100);ov('ov-spq',Math.round(P.pct_peq*100)+'%');
+  sl('sl-spm',P.pct_med*100);ov('ov-spm',Math.round(P.pct_med*100)+'%');
+  sl('sl-desc',P.descuento*100);ov('ov-desc',(P.descuento*100).toFixed(1)+'%');
+  sl('sl-upgr',P.pct_upgrade*100);ov('ov-upgr',Math.round(P.pct_upgrade*100)+'%');
+  sl('sl-churn',P.churn*100);ov('ov-churn',(P.churn*100).toFixed(1)+'%');
+  sl('sl-df5',P.dir_f5);ov('ov-df5',P.dir_f5);
+  sl('sl-ref',P.referidos);ov('ov-ref',P.referidos.toFixed(1));
+  sl('sl-rms',P.rms_grandes);ov('ov-rms',P.rms_grandes);
+  sl('sl-ramp',P.ramp_meses);ov('ov-ramp',P.ramp_meses+'m');
+  sl('sl-caca',P.cac_alianza);ov('ov-caca','$'+P.cac_alianza);
+  sl('sl-smr',P.sm_rest);ov('ov-smr','$'+P.sm_rest);
+  sl('sl-smm',P.sm_marcas);ov('ov-smm','$'+P.sm_marcas);
+  sl('sl-msm',P.margen_sm*100);ov('ov-msm',Math.round(P.margen_sm*100)+'%');
+  sl('sl-red',P.pct_redim*100);ov('ov-red',Math.round(P.pct_redim*100)+'%');
+  sl('sl-sop',P.soporte_rest);ov('ov-sop','$'+P.soporte_rest);
+  sl('sl-rem',P.rest_em);ov('ov-rem',P.rest_em);
+  sl('sl-rcs',P.rest_cs);ov('ov-rcs',P.rest_cs);
+  sl('sl-opf',P.opex_factor);ov('ov-opf',P.opex_factor.toFixed(1)+'x');
+  sl('sl-cacd',P.cac_directo);ov('ov-cacd','$'+P.cac_directo);
+  sl('sl-caj',P.caja_ini);ov('ov-caj','$'+Math.round(P.caja_ini/1000)+'K');
+  sl('sl-mul',P.val_mult);ov('ov-mul',P.val_mult.toFixed(1)+'x');
+  updateArpuPond();
+  buildToggles();
+  update();
+}
+
+function buildSegVisual(){
+  const peq=P.pct_peq, med=P.pct_med, gra=Math.max(0,1-peq-med);
+  const segs=[
+    {name:t('seg_small'),plan:'Light',pct:peq,arpu:P.arpu_peq,mes:P.meseros_peq,color:'#3b82f6'},
+    {name:t('seg_medium'),plan:'Standard',pct:med,arpu:P.arpu_med,mes:P.meseros_med,color:'#f59e0b'},
+    {name:t('seg_large'),plan:'Premium',pct:gra,arpu:P.arpu_gra,mes:P.meseros_gra,color:'#a855f7'},
+  ];
+  document.getElementById('seg-bar').innerHTML=segs.map(s=>
+    `<div style="width:${s.pct*100}%;background:${s.color};min-width:${s.pct>0?20:0}px;display:flex;align-items:center;justify-content:center">
+       ${s.pct>0.05?`<span style="font-size:10px;font-weight:700;color:#04090f">${Math.round(s.pct*100)}%</span>`:''}
+     </div>`
+  ).join('');
+  document.getElementById('seg-cards').innerHTML=segs.map(s=>
+    `<div class="seg-card" style="border-color:${s.color}30">
+       <div style="font-size:9px;color:${s.color};font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px">${s.name} · ${s.plan}</div>
+       <div style="font-size:16px;font-weight:700;color:#d4e4f7;font-family:'Courier New',monospace">$${s.arpu}<span style="font-size:9px;color:#4a6480">/mes/mes.</span></div>
+       <div style="font-size:10px;color:#4a6480;margin-top:2px">${s.mes} ${t('waiters_word')} · ${Math.round(s.pct*100)}% mix</div>
+     </div>`
+  ).join('');
+  const arpuBruto=peq*P.arpu_peq+med*P.arpu_med+gra*P.arpu_gra;
+  const arpuNeto=arpuBruto*(1-(P.descuento||0.225));
+  const meserosPond=peq*P.meseros_peq+med*P.meseros_med+gra*P.meseros_gra;
+  document.getElementById('arpu-grid').innerHTML=[
+    {lbl:t('arpu_gross'),val:'$'+arpuBruto.toFixed(2),col:'#3b82f6'},
+    {lbl:t('arpu_disc'),val:'-'+(((P.descuento||0.225)*100).toFixed(1))+'%',col:'#ef4444'},
+    {lbl:t('arpu_net'),val:'$'+arpuNeto.toFixed(2),col:'#f59e0b'},
+    {lbl:t('arpu_upgr'),val:'+$'+((P.pct_upgrade||0.1)*50).toFixed(2),col:'#10b981'},
+  ].map(i=>`<div class="arpu-cell"><div class="arpu-lbl">${i.lbl}</div><div class="arpu-val" style="color:${i.col}">${i.val}</div></div>`).join('');
+}
+
+function update(){
+  updateArpuPond();
+  buildSegVisual();
+  const mo=simulate(P);
+  const an=annual(mo);
+  const bMo=simulate(BASE);
+  const bAn=annual(bMo);
+  const tot60ing=an.reduce((s,y)=>s+y.ing,0);
+  const tot60eb=an.reduce((s,y)=>s+y.ebitda,0);
+  const tot60un=an.reduce((s,y)=>s+y.uneta,0);
+  const caja60=mo[59].caja;
+  const rest60=mo[59].rest;
+  const arrY1=an[0].arr;
+  const mesEbPos=mo.findIndex(x=>x.ebitda>0)+1||0;
+  const valPre=arrY1*P.val_mult;
+  const dilution=P.caja_ini/(valPre+P.caja_ini);
+  const peq=P.pct_peq,med=P.pct_med,gra=Math.max(0,1-peq-med);
+  const arpuBruto=peq*(P.arpu_peq||12)+med*(P.arpu_med||25)+gra*(P.arpu_gra||45);
+  const arpuNeto=arpuBruto*(1-(P.descuento||0.225));
+  const meserosPond=peq*(P.meseros_peq||5)+med*(P.meseros_med||10)+gra*(P.meseros_gra||25);
+
+  const deltaEB=tot60eb-bAn.reduce((s,y)=>s+y.ebitda,0);
+  const deltaC=caja60-bMo[59].caja;
+  const deltaR=rest60-bMo[59].rest;
+
+  const valPre2=arrY1*P.val_mult;
+  const dilution2=P.caja_ini/(valPre2+P.caja_ini);
+  const margenEB5=an[4]?an[4].ebitda/an[4].ing:0;
+  const KPIs=[
+    {lbl:t('kpi_rev_total'),val:fmtM(tot60ing),sub:`ARR ${t('year_short')}1: ${fmtM(arrY1)}`,ac:'#3b82f6'},
+    {lbl:t('kpi_ebitda_cum'),val:fmtM(tot60eb),sub:`${t('delta_vs_base')}: ${deltaEB>=0?'+':''}${fmtM(deltaEB)}`,ac:tot60eb>=0?'#10b981':'#ef4444'},
+    {lbl:t('kpi_cash_final'),val:fmtM(caja60),sub:`${t('delta_vs_base')}: ${deltaC>=0?'+':''}${fmtM(deltaC)}`,ac:'#a855f7'},
+    {lbl:t('kpi_rest_60'),val:rest60.toLocaleString(),sub:`${t('delta_vs_base')}: ${deltaR>=0?'+':''}${deltaR.toLocaleString()}`,ac:'#f59e0b'},
+    {lbl:t('kpi_val_pre'),val:fmtM(valPre2),sub:`${t('kpi_val_post')}: ${fmtM(valPre2+P.caja_ini)} · ${t('kpi_dilution')}: ${(dilution2*100).toFixed(1)}%`,ac:'#6366f1'},
+    {lbl:t('kpi_margin_y5'),val:(margenEB5*100).toFixed(1)+'%',sub:`EBITDA ${t('year_short')}5: ${fmtM(an[4]?an[4].ebitda:0)}`,ac:margenEB5>=0.15?'#10b981':margenEB5>=0?'#f59e0b':'#ef4444'},
+    {lbl:t('arpu_net'),val:'$'+arpuNeto.toFixed(2),sub:`${t('arpu_gross_short')} $${arpuBruto.toFixed(2)} · ${t('arpu_disc_short')} ${((P.descuento||0.225)*100).toFixed(1)}%`,ac:'#f59e0b'},
+    {lbl:t('kpi_ebitda_pos'),val:mesEbPos?`${t('month_short')} ${mesEbPos}`:'N/A',sub:mesEbPos<=12?`${t('year_short')} 1`:mesEbPos<=24?`${t('year_short')} 2`:`${t('year_short')} 3+`,ac:mesEbPos&&mesEbPos<=12?'#10b981':mesEbPos&&mesEbPos<=24?'#f59e0b':'#ef4444'},
+  ];
+  document.getElementById('kpi-row').innerHTML=KPIs.map(k=>
+    `<div class="kpi" style="border:1px solid ${k.ac}28"><div class="kpi-bar" style="background:${k.ac}"></div><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val" style="color:${k.ac}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`
+  ).join('');
+
+  c1.data.datasets[0].data=an.map(y=>y.ing);
+  c1.data.datasets[1].data=an.map(y=>y.ebitda);
+  c1.data.datasets[1].backgroundColor=an.map(y=>y.ebitda>=0?'#10b98180':'#ef444480');
+  c1.data.datasets[2].data=an.map(y=>y.caja);
+  c1.update('none');
+
+  c2.data.labels=mo.map(x=>x.m);
+  c2.data.datasets[0].data=mo.map(x=>x.restPeq);
+  c2.data.datasets[1].data=mo.map(x=>x.restMed);
+  c2.data.datasets[2].data=mo.map(x=>x.restGra);
+  c2.data.datasets[3].data=mo.map(x=>x.arr);
+  c2.update('none');
+
+  buildSens(arpuNeto);
+  buildUE(mo, arpuNeto, meserosPond);
+  buildTable(an,tot60ing,tot60eb,tot60un,caja60);
+}
+
+function buildSens(curArpuNeto){
+  const churns=[.01,.02,.03,.05,.07];
+  const arpuNetos=[10,13,16,19,22];
+  const curC=P.churn;
+  const rows=churns.map(c=>arpuNetos.map(an=>{
+    const factor=an/curArpuNeto;
+    const mo2=simulate({...P,churn:c,arpu_peq:(P.arpu_peq||12)*factor,arpu_med:(P.arpu_med||25)*factor,arpu_gra:(P.arpu_gra||45)*factor});
+    const eb60=mo2.reduce((s,x)=>s+x.ebitda,0);
+    const isCur=Math.abs(c-curC)<.005&&Math.abs(an-curArpuNeto)<.5;
+    const bg=eb60>5e6?'#10b98125':eb60>0?'#f59e0b20':'#ef444420';
+    const col=eb60>5e6?'#10b981':eb60>0?'#f59e0b':'#ef4444';
+    return`<td style="padding:5px 6px;text-align:center;font-family:'Courier New',monospace;font-size:9.5px;background:${bg};color:${col};border:${isCur?'2px solid #fff':'1px solid #162233'};border-radius:3px">${fmtM(eb60)}</td>`;
+  }).join(''));
+  const hdr=`<tr><th style="padding:4px 6px;font-size:9px;color:#4a6480;border:1px solid #162233;text-align:center">${t('sens_hdr')}</th>`+arpuNetos.map(a=>`<th style="padding:4px 6px;font-size:9px;color:#4a6480;border:1px solid #162233;text-align:center">$${a}</th>`).join('')+'</tr>';
+  const body=churns.map((c,i)=>`<tr><td style="padding:4px 6px;font-size:9px;color:#4a6480;border:1px solid #162233;text-align:center">${(c*100).toFixed(0)}%</td>${rows[i]}</tr>`).join('');
+  document.getElementById('sens-table').innerHTML=`<table style="border-collapse:collapse;width:100%">${hdr}${body}</table>`;
+}
+
+function buildUE(mo, arpuNeto, meserosPond){
+  const m12=mo[11]||mo[mo.length-1];
+  if(!m12||m12.rest<1){document.getElementById('ue-panel').innerHTML='<div style="color:#4a6480;font-size:10px">${t("no_rest_m12")}</div>';return}
+  const r=m12.rest;
+  const coR=(m12.costos+m12.cac)/r;
+  const ingR=m12.ing/r;
+  const brute=ingR-coR;
+  const saasRec=meserosPond*arpuNeto;
+  const upgradeRec=(P.pct_upgrade||0.1)*50;
+  const smB1=meserosPond*(P.sm_rest+P.sm_marcas*(P.marcas_rest||2));
+  const smC1=smB1*P.pct_redim*(1-P.margen_sm);
+  const smN1=smB1-smC1;
+  const oneoff=P.setup_fee+(P.marcas_rest-1)*P.entry_fee;
+  document.getElementById('ue-panel').innerHTML=[
+    [t('ue_oneoff'),'$'+Math.round(oneoff),'#f59e0b'],
+    [t('ue_saas'),'$'+Math.round(saasRec),'#3b82f6'],
+    [t('ue_fee_upgr'),'+$'+upgradeRec.toFixed(2),'#10b981'],
+    [t('ue_sm_gross'),'$'+Math.round(smB1),'#6b9fd0'],
+    [t('ue_sm_cost'),'-$'+Math.round(smC1),'#ef4444'],
+    [t('ue_sm_net'),'$'+Math.round(smN1),'#10b981'],
+    [t('ue_arr_1'),'$'+Math.round((saasRec+upgradeRec+smN1)*12).toLocaleString(),'#10b981'],
+    [t('ue_total_cost'),'$'+Math.round(coR),'#ef4444'],
+    [t('ue_margin'),'$'+Math.round(brute),brute>0?'#10b981':'#ef4444'],
+  ].map(([l,v,c])=>`<div class="ue-row"><span class="ue-lbl">${l}</span><span class="ue-val" style="color:${c}">${v}</span></div>`).join('');
+  const recTot=saasRec+upgradeRec+smN1;
+  document.getElementById('ue-scale').innerHTML=[100,300,1000].map(n=>
+    `<div style="background:#0f1e30;border:1px solid #162233;border-radius:6px;padding:6px 10px;font-size:9px"><div style="color:#4a6480;margin-bottom:2px">${n.toLocaleString()} ${t('rest_short')}</div><div style="color:#10b981;font-weight:700;font-family:'Courier New',monospace">${fmtM(n*recTot*12)}/${t('year_short2')}</div></div>`
+  ).join('');
+}
+
+function buildTable(an,ti,te,tu,tc){
+  const hd=[t('th_year'),t('th_rev'),t('th_costs'),'CAC','OPEX',t('th_upgr'),'EBITDA',t('th_net'),t('th_cash'),t('th_rest')];
+  const hr='<tr style="background:#0c1a27">'+hd.map((h,i)=>`<th style="padding:6px 9px;text-align:${i?'right':'left'};color:#4a6480;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #162233">${h}</th>`).join('')+'</tr>';
+  const rows=an.map((y,i)=>{
+    const ec=y.ebitda>=0?'#10b981':'#ef4444';
+    const uc=y.uneta>=0?'#10b981':'#ef4444';
+    return`<tr style="background:${i%2?'#0f1e3040':'transparent'}">
+      <td style="padding:5px 9px;color:#7ca8d0;font-family:'Courier New',monospace;border-bottom:1px solid #162233">${y.y}</td>
+      <td style="padding:5px 9px;text-align:right;color:#f59e0b;font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">${fmtM(y.ing)}</td>
+      <td style="padding:5px 9px;text-align:right;color:#ef4444;font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">(${fmtM(y.costos)})</td>
+      <td style="padding:5px 9px;text-align:right;color:#94a8c0;font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">(${fmtM(y.cac)})</td>
+      <td style="padding:5px 9px;text-align:right;color:#64748b;font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">(${fmtM(y.opex)})</td>
+      <td style="padding:5px 9px;text-align:right;color:#10b981;font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">${fmtM(y.iUpgrade)}</td>
+      <td style="padding:5px 9px;text-align:right;color:${ec};font-family:'Courier New',monospace;font-weight:700;font-size:10px;border-bottom:1px solid #162233">${fmtM(y.ebitda)}</td>
+      <td style="padding:5px 9px;text-align:right;color:${uc};font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">${fmtM(y.uneta)}</td>
+      <td style="padding:5px 9px;text-align:right;color:#a855f7;font-family:'Courier New',monospace;font-weight:700;font-size:10px;border-bottom:1px solid #162233">${fmtM(y.caja)}</td>
+      <td style="padding:5px 9px;text-align:right;color:#d4e4f7;font-family:'Courier New',monospace;font-size:10px;border-bottom:1px solid #162233">${y.rest.toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+  const ec=te>=0?'#10b981':'#ef4444';const uc=tu>=0?'#10b981':'#ef4444';
+  const tot=`<tr style="background:#0c1a27">
+    <td style="padding:6px 9px;color:#7ca8d0;font-weight:700;font-family:'Courier New',monospace;font-size:10px;border-top:1px solid #162233">${t("total")}</td>
+    <td style="padding:6px 9px;text-align:right;color:#f59e0b;font-family:'Courier New',monospace;font-weight:700;font-size:10px;border-top:1px solid #162233">${fmtM(ti)}</td>
+    <td colspan="3" style="border-top:1px solid #162233;padding:6px 9px;text-align:right;color:#4a6480;font-size:10px">—</td>
+    <td style="padding:6px 9px;text-align:right;color:#10b981;font-family:'Courier New',monospace;font-size:10px;border-top:1px solid #162233">—</td>
+    <td style="padding:6px 9px;text-align:right;color:${ec};font-family:'Courier New',monospace;font-weight:700;font-size:10px;border-top:1px solid #162233">${fmtM(te)}</td>
+    <td style="padding:6px 9px;text-align:right;color:${uc};font-family:'Courier New',monospace;font-size:10px;border-top:1px solid #162233">${fmtM(tu)}</td>
+    <td style="padding:6px 9px;text-align:right;color:#a855f7;font-family:'Courier New',monospace;font-weight:700;font-size:10px;border-top:1px solid #162233">${fmtM(tc)}</td>
+    <td style="border-top:1px solid #162233"></td>
+  </tr>`;
+  document.getElementById('detail-table').innerHTML=`<thead>${hr}</thead><tbody>${rows}${tot}</tbody>`;
+}
+
+/* ─── INIT ─── */
+updateArpuPond();
+buildToggles();
+initCharts();
+update();
+/* Apply saved language on load */
+if (currentLang !== 'es') {
+  setMiLang(currentLang);
+}
+
+</script>
+</body>
+</html>

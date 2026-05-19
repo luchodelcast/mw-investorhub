@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+
+<html data-page="saaf" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Master Waiters · SAAF · El Motor de la Escala Global</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0D0C09; --bg2:#141310; --bg3:#1B1A16; --bg4:#222119;
+  --gold:#C9A447; --gold-l:rgba(201,164,71,.12); --gold-b:rgba(201,164,71,.25);
+  --text:#EDE9E0; --text2:#9C9890; --text3:#5E5D58;
+  --border:rgba(201,164,71,.22); --border2:rgba(237,233,224,.08);
+  --teal:#1D9E75; --violet:#7F77DD; --blue:#378ADD;
+  --teal-l:rgba(29,158,117,.12); --violet-l:rgba(127,119,221,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'DM Sans',-apple-system,sans-serif;
+  font-size:15px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.2;}
+.container{max-width:900px;margin:0 auto;padding:0 32px;}
+
+/* ── COVER ── */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;border-bottom:0.5px solid var(--border);padding:80px 0;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;top:-200px;right:-200px;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,71,.05) 0%,transparent 70%);pointer-events:none;}
+.cover::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(29,158,117,.04) 0%,transparent 70%);pointer-events:none;}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.cover-badge{display:inline-flex;align-items:center;gap:8px;border:0.5px solid var(--border);background:var(--gold-l);padding:8px 16px;border-radius:100px;font-size:12px;color:var(--gold);margin-bottom:28px;letter-spacing:.04em;}
+.cover-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.cover-title{font-size:clamp(40px,6.5vw,68px);color:var(--text);margin-bottom:8px;letter-spacing:-.02em;}
+.cover-title em{color:var(--gold);font-style:normal;}
+.cover-sub{font-size:18px;color:var(--text2);max-width:580px;margin-bottom:48px;font-weight:300;line-height:1.65;}
+.cover-meta{display:flex;gap:40px;border-top:0.5px solid var(--border2);padding-top:24px;flex-wrap:wrap;gap:32px;}
+.cover-meta-item .label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:4px;}
+.cover-meta-item .val{font-size:14px;color:var(--text2);}
+
+/* ── SECTIONS ── */
+.section{padding:80px 0;border-bottom:0.5px solid var(--border2);}
+.section-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.section-title{font-size:clamp(28px,4vw,44px);margin-bottom:10px;letter-spacing:-.01em;}
+.section-lead{font-size:17px;color:var(--text2);max-width:640px;margin-bottom:40px;font-weight:300;line-height:1.7;}
+.gold-divider{width:48px;height:1px;background:var(--gold);margin:24px 0;}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:0.5px solid var(--border2);border-radius:12px;overflow:hidden;margin:40px 0;}
+.stat{background:var(--bg2);padding:28px 24px;}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:var(--gold);line-height:1;margin-bottom:8px;}
+.stat-val.teal{color:var(--teal);}
+.stat-label{font-size:13px;color:var(--text2);}
+.stat-note{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* ── PROBLEM / THESIS ── */
+.thesis-block{border:0.5px solid var(--border);background:var(--gold-l);border-radius:12px;padding:28px 32px;margin:36px 0;}
+.thesis-block .t-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.thesis-block .t-text{font-family:'Cormorant Garamond',serif;font-size:22px;line-height:1.5;color:var(--text);}
+
+/* ── BEFORE / AFTER ── */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
+.ba-card{background:var(--bg3);border:0.5px solid var(--border2);border-radius:12px;padding:24px;}
+.ba-card.after{border-color:var(--border);background:var(--gold-l);}
+.ba-header{font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;}
+.ba-header.before{color:var(--text3);}
+.ba-header.after{color:var(--gold);}
+.ba-item{display:flex;gap:10px;margin-bottom:10px;font-size:14px;color:var(--text2);line-height:1.5;}
+.ba-item::before{content:'×';color:var(--text3);flex-shrink:0;margin-top:1px;}
+.ba-card.after .ba-item::before{content:'✓';color:var(--teal);}
+.ba-card.after .ba-item{color:var(--text);}
+
+/* ── LAYERS ── */
+.layers{margin:36px 0;}
+.layer-row{display:flex;align-items:stretch;gap:0;margin-bottom:3px;}
+.layer-num{width:36px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3);flex-shrink:0;}
+.layer-bar{flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.layer-bar.highlight{border-color:var(--border);background:var(--gold-l);}
+.layer-bar.built{border-color:rgba(29,158,117,.3);background:var(--teal-l);}
+.layer-name{font-size:14px;font-weight:500;}
+.layer-desc{font-size:12px;color:var(--text2);}
+.layer-badge{font-size:10px;padding:3px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+.badge-built{background:var(--teal-l);color:var(--teal);border:0.5px solid rgba(29,158,117,.3);}
+.badge-saaf{background:var(--gold-l);color:var(--gold);border:0.5px solid var(--border);}
+.badge-saaf-ext{background:var(--violet-l);color:var(--violet);border:0.5px solid rgba(127,119,221,.3);}
+
+/* ── SCALE CHART ── */
+.scale-chart{margin:40px 0;}
+.scale-row{display:grid;grid-template-columns:100px 1fr 120px;gap:16px;align-items:center;margin-bottom:8px;}
+.scale-year{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--gold);}
+.scale-bar-wrap{background:var(--bg3);border-radius:6px;height:36px;position:relative;overflow:hidden;border:0.5px solid var(--border2);}
+.scale-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:500;white-space:nowrap;transition:width .3s ease;}
+.scale-bar.b1{background:linear-gradient(90deg,rgba(201,164,71,.4),rgba(201,164,71,.2));color:var(--gold);width:1%;}
+.scale-bar.b2{background:linear-gradient(90deg,rgba(201,164,71,.5),rgba(201,164,71,.25));color:var(--gold);width:5%;}
+.scale-bar.b3{background:linear-gradient(90deg,rgba(201,164,71,.6),rgba(201,164,71,.3));color:var(--gold);width:20%;}
+.scale-bar.b4{background:linear-gradient(90deg,rgba(201,164,71,.7),rgba(201,164,71,.35));color:var(--gold);width:50%;}
+.scale-bar.b5{background:linear-gradient(90deg,var(--gold),rgba(201,164,71,.6));color:#0D0C09;width:100%;}
+.scale-arr{font-size:13px;color:var(--text2);text-align:right;}
+.scale-saaf-note{font-size:11px;color:var(--teal);margin-top:3px;}
+
+/* ── AGENTS DIAGRAM ── */
+.agents-diagram{margin:36px 0;}
+.agent-level{margin-bottom:24px;}
+.agent-level-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px;}
+.agent-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.agent-chip{background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:10px 16px;font-size:13px;}
+.agent-chip.brand{border-color:var(--border);background:var(--gold-l);color:var(--gold);}
+.agent-chip.chain{border-color:rgba(127,119,221,.4);background:var(--violet-l);color:var(--violet);}
+.agent-chip.venue{border-color:rgba(29,158,117,.4);background:var(--teal-l);color:var(--teal);}
+.connector{display:flex;align-items:center;gap:8px;margin:4px 0 16px 8px;}
+.connector-line{width:1px;height:16px;background:var(--border2);}
+.connector-label{font-size:11px;color:var(--text3);}
+
+/* ── FLOW ── */
+.flow{display:flex;align-items:center;gap:0;margin:32px 0;flex-wrap:wrap;}
+.flow-step{background:var(--bg3);border:0.5px solid var(--border2);border-radius:10px;padding:14px 18px;font-size:13px;min-width:120px;text-align:center;}
+.flow-step strong{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:400;}
+.flow-step.active{border-color:var(--border);background:var(--gold-l);}
+.flow-arrow{color:var(--text3);font-size:18px;padding:0 6px;flex-shrink:0;}
+.flow-note{font-size:11px;color:var(--teal);margin-top:3px;}
+
+/* ── QUOTE ── */
+.quote{border-left:2px solid var(--gold);padding:20px 24px;margin:32px 0;background:var(--gold-l);border-radius:0 8px 8px 0;}
+.quote-text{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.5;color:var(--text);font-style:italic;margin-bottom:8px;}
+.quote-attr{font-size:12px;color:var(--text3);}
+
+/* ── CARDS 2-COL ── */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
+.card{background:var(--bg3);border:0.5px solid var(--border2);border-radius:12px;padding:24px;}
+.card.gold{border-color:var(--border);}
+.card-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;}
+.card-title{font-size:16px;font-weight:500;margin-bottom:8px;}
+.card-body{font-size:14px;color:var(--text2);line-height:1.7;}
+
+/* ── COST TABLE ── */
+.cost-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:13px;}
+.cost-table th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:0.5px solid var(--border2);font-weight:500;}
+.cost-table td{padding:12px 14px;border-bottom:0.5px solid var(--border2);color:var(--text2);vertical-align:top;}
+.cost-table td:first-child{color:var(--text);}
+.cost-table tr:last-child td{border-bottom:none;font-weight:500;color:var(--gold);}
+
+/* ── CALLOUT ── */
+.callout{border:0.5px solid var(--border);background:var(--gold-l);border-radius:12px;padding:20px 24px;margin:24px 0;font-size:14px;line-height:1.65;}
+.callout strong{color:var(--gold);}
+
+/* ── TIMELINE ── */
+.timeline{margin:40px 0;}
+.tl-item{display:grid;grid-template-columns:100px 1fr;gap:24px;margin-bottom:3px;}
+.tl-year-col{padding:20px 0;text-align:right;}
+.tl-year{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--gold);line-height:1;}
+.tl-sublabel{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.tl-body{background:var(--bg3);border:0.5px solid var(--border2);border-radius:12px;padding:20px 24px;margin-bottom:3px;}
+.tl-body.active{border-color:var(--border);}
+.tl-target{font-size:26px;font-weight:500;font-family:'Cormorant Garamond',serif;margin-bottom:4px;}
+.tl-sub{font-size:13px;color:var(--gold);margin-bottom:12px;letter-spacing:.02em;}
+.tl-items{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:3px 16px;}
+.tl-items li{font-size:13px;color:var(--text2);padding-left:14px;position:relative;}
+.tl-items li::before{content:'—';position:absolute;left:0;color:var(--text3);}
+.tl-items li.saaf{color:var(--teal);}
+.tl-items li.saaf::before{content:'◆';font-size:8px;top:4px;}
+
+/* ── FOOTER ── */
+.footer{padding:48px 0;}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;margin-bottom:32px;padding-bottom:32px;border-bottom:0.5px solid var(--border2);}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);margin-bottom:6px;}
+.footer-contact{font-size:13px;color:var(--text2);line-height:2.1;}
+.footer-note{font-size:11px;color:var(--text3);max-width:280px;text-align:right;line-height:1.7;}
+.footer-bottom{font-size:11px;color:var(--text3);text-align:center;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .ba-grid,.card-grid{grid-template-columns:1fr;}
+  .tl-item{grid-template-columns:1fr;}
+  .tl-year-col{text-align:left;padding:16px 0 0;}
+  .tl-items{grid-template-columns:1fr;}
+  .scale-row{grid-template-columns:80px 1fr;}
+  .scale-arr{display:none;}
+  .flow{gap:4px;}
+  .footer-top{flex-direction:column;}
+  .footer-note{text-align:left;}
+}
+</style>
+</head>
+<body>
+<!-- ═══════════════════════════════════════════ COVER -->
+<div class="cover">
+<div class="container">
+<div class="eyebrow">Master Waiters · Superlikers · Confidencial · Abril 2026</div>
+<div class="cover-badge">SAAF — Superlikers Autonomous Agents Framework</div>
+<h1 class="cover-title" data-i18n="saaf.cover_title.0">El motor que hace posible<br><em>1 a 1,000,000</em></h1>
+<p class="cover-sub" data-i18n="saaf.cover_sub.0">Por qué la plataforma de gamificación más ambiciosa del sector restaurantero no puede escalar sin inteligencia autónoma — y cómo SAAF resuelve exactamente ese problema.</p>
+<div class="cover-meta">
+<div class="cover-meta-item"><div class="label" data-i18n="saaf.cover_meta_label.0">Producto</div><div class="val">Master Waiters</div></div>
+<div class="cover-meta-item"><div class="label" data-i18n="saaf.cover_meta_label.1">Plataforma</div><div class="val">Superlikers (2010)</div></div>
+<div class="cover-meta-item"><div class="label" data-i18n="saaf.cover_meta_label.2">Piloto activo</div><div class="val" data-i18n="saaf.cover_meta_val.2">23 sucursales HOT · Colombia</div></div>
+<div class="cover-meta-item"><div class="label" data-i18n="saaf.cover_meta_label.3">Objetivo 5 años</div><div class="val" data-i18n="saaf.cover_meta_val.3">1,000,000 restaurantes globales</div></div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 01 EL CUELLO DE BOTELLA -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.0">01 · El problema de escala</div>
+<h2 class="section-title" data-i18n="saaf.section_title.0">La promesa de Master Waiters tiene un cuello de botella.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.0">La plataforma conecta marcas, restaurantes y meseros en un ecosistema de gamificación de alto rendimiento. El modelo funciona. El piloto lo demuestra. Pero operar a 5,000 restaurantes con el mismo modelo humano que funciona a 23 es sencillamente imposible.</p>
+<div class="thesis-block">
+<div class="t-label" data-i18n="saaf.thesis_label.0">La tesis del problema</div>
+<div class="t-text" data-i18n="saaf.thesis_text.0">Cada reto que un mesero ve en su app fue diseñado por un Engagement Manager humano. A 23 restaurantes, eso es manejable. A 5,000 — la condición que Coca-Cola Colombia pone sobre la mesa — ese modelo requeriría un equipo proporcional al número de clientes. Con ese modelo, la empresa no escala. El crecimiento destruye el margen.</div>
+</div>
+<div class="stat-grid">
+<div class="stat">
+<div class="stat-val">15M+</div>
+<div class="stat-label" data-i18n="saaf.stat_label.0">Restaurantes en el mundo</div>
+<div class="stat-note" data-i18n="saaf.stat_note.0">Mercado total accesible</div>
+</div>
+<div class="stat">
+<div class="stat-val">50M+</div>
+<div class="stat-label" data-i18n="saaf.stat_label.1">Meseros activos globalmente</div>
+<div class="stat-note" data-i18n="saaf.stat_note.1">La fuerza de ventas más subutilizada del planeta</div>
+</div>
+<div class="stat">
+<div class="stat-val teal">$0</div>
+<div class="stat-label" data-i18n="saaf.stat_label.2">Inversión global en motivación de meseros</div>
+<div class="stat-note" data-i18n="saaf.stat_note.2">Ningún estándar existe hoy. Eso es la oportunidad.</div>
+</div>
+</div>
+<div class="ba-grid">
+<div class="ba-card">
+<div class="ba-header before" data-i18n="saaf.ba_header_before.0">Sin SAAF — crecimiento lineal</div>
+<div class="ba-item" data-i18n="saaf.ba_item_before.0">Cada cliente nuevo requiere tiempo proporcional del equipo</div>
+<div class="ba-item" data-i18n="saaf.ba_item_before.1">Diseño manual de cada reto por cada restaurante</div>
+<div class="ba-item" data-i18n="saaf.ba_item_before.2">Más clientes = más personas = más costo operativo</div>
+<div class="ba-item" data-i18n="saaf.ba_item_before.3">Imposible escalar a 5,000 sin destruir el margen</div>
+<div class="ba-item" data-i18n="saaf.ba_item_before.4">Los errores de configuración los detecta un humano, tarde</div>
+</div>
+<div class="ba-card after">
+<div class="ba-header after" data-i18n="saaf.ba_header_after.0">Con SAAF — crecimiento exponencial</div>
+<div class="ba-item" data-i18n="saaf.ba_item_after.0">El agente genera la parrilla mensual de forma autónoma</div>
+<div class="ba-item" data-i18n="saaf.ba_item_after.1">Un EM puede supervisar 10× más clientes con la misma calidad</div>
+<div class="ba-item" data-i18n="saaf.ba_item_after.2">Más restaurantes = más data = mejor agente = mejores resultados</div>
+<div class="ba-item" data-i18n="saaf.ba_item_after.3">5,000 restaurantes con el mismo equipo que atiende 23 hoy</div>
+<div class="ba-item" data-i18n="saaf.ba_item_after.4">Monitor automático detecta y corrige anomalías en tiempo real</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 02 QUÉ ES SAAF -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.1">02 · La solución tecnológica</div>
+<h2 class="section-title" data-i18n="saaf.section_title.1">SAAF no reemplaza a las personas. Las multiplica.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.1">Superlikers Autonomous Agents Framework es una capa de agentes autónomos que se sienta encima de la plataforma existente. No modifica el motor de gamificación, ni las apps de meseros, ni los endpoints que ya operan en producción. Lo complementa con inteligencia proactiva.</p>
+<div class="callout" data-i18n="saaf.callout.0">
+<strong>Principio de diseño irrenunciable:</strong> SAAF nunca publica una oportunidad sin supervisión humana. Siempre hay al menos un humano en el loop antes de que un reto sea visible para los meseros. La autonomía tiene límites deliberados — el administrador de cada sucursal tiene veto final, siempre.
+  </div>
+<p style="font-size:14px;color:var(--text2);margin:24px 0 16px;" data-i18n="saaf.three_components.0">Los tres componentes centrales del sistema:</p>
+<div class="card-grid">
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.0">Componente 1</div>
+<div class="card-title" data-i18n="saaf.card_title.0">Agente Proponente</div>
+<div class="card-body" data-i18n="saaf.card_body.0">Analiza 12+ meses de historial del POS, la temporada, el portafolio de la marca y los objetivos del mes. Genera una parrilla completa — mínimo 10 retos, 4 desafíos y 2 misiones — sin que nadie se lo pida. Propone 2–3 alternativas por oportunidad para que el humano elija.</div>
+</div>
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.1">Componente 2</div>
+<div class="card-title" data-i18n="saaf.card_title.1">Motor de Aprobación</div>
+<div class="card-body" data-i18n="saaf.card_body.1">Gestiona el flujo de revisión humana configurable por cliente. Para retos del restaurante, el admin aprueba explícitamente. Para retos de marca, Coca-Cola aprueba primero y el admin tiene 24h para vetar. El admin siempre tiene la palabra final.</div>
+</div>
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.2">Componente 3</div>
+<div class="card-title" data-i18n="saaf.card_title.2">Agente Publicador</div>
+<div class="card-body" data-i18n="saaf.card_body.2">Toma la propuesta aprobada, construye el payload completo y lo publica vía los endpoints de la plataforma Superlikers que ya existen en producción. Monitorea continuamente y despublica automáticamente si detecta anomalías técnicas.</div>
+</div>
+<div class="card gold">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.3">Motor de aprendizaje</div>
+<div class="card-title" data-i18n="saaf.card_title.3">El agente mejora con cada ciclo</div>
+<div class="card-body" data-i18n="saaf.card_body.3">Los resultados reales (tasa de cumplimiento, uplift real vs proyectado, tasa de aceptación) retroalimentan al agente antes de la siguiente parrilla mensual. El criterio del Engagement Manager también se incorpora como señal editorial. Cuantos más restaurantes, mejor el agente.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 03 ARQUITECTURA -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.2">03 · Arquitectura técnica</div>
+<h2 class="section-title" data-i18n="saaf.section_title.2">8 capas. Los tres más difíciles ya están construidos.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.2">La infraestructura técnica más compleja de SAAF no se construye desde cero — ya existe y opera en producción. SAAF se levanta encima de esa base.</p>
+<div class="layers">
+<div class="layer-row">
+<div class="layer-num">1</div>
+<div class="layer-bar built">
+<div><div class="layer-name" data-i18n="saaf.layer_name.0">Fuentes de datos</div><div class="layer-desc" data-i18n="saaf.layer_desc.0">POS HOT Restaurantes en tiempo real · POS OXXO · ERP corporativo</div></div>
+<div class="layer-badge badge-built" data-i18n="saaf.badge_built.0">Ya en producción ✓</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">2</div>
+<div class="layer-bar built">
+<div><div class="layer-name" data-i18n="saaf.layer_name.1">Conectores normalizados</div><div class="layer-desc" data-i18n="saaf.layer_desc.1">Todos los POS entregan la misma estructura al agente · intercambiables</div></div>
+<div class="layer-badge badge-saaf">SAAF · MVP</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">3</div>
+<div class="layer-bar highlight">
+<div><div class="layer-name" data-i18n="saaf.layer_name.2">Agentes proponentes</div><div class="layer-desc" data-i18n="saaf.layer_desc.2">Una instancia por nivel: Marca / Cadena / Sucursal · propone sin que nadie lo pida</div></div>
+<div class="layer-badge badge-saaf">SAAF · MVP</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">4</div>
+<div class="layer-bar highlight">
+<div><div class="layer-name" data-i18n="saaf.layer_name.3">Motor de aprobación</div><div class="layer-desc" data-i18n="saaf.layer_desc.3">Flujo configurable por cliente · Admin siempre tiene veto final · AWS Step Functions</div></div>
+<div class="layer-badge badge-saaf">SAAF · MVP</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">5</div>
+<div class="layer-bar">
+<div><div class="layer-name" data-i18n="saaf.layer_name.4">Canal de notificaciones</div><div class="layer-desc" data-i18n="saaf.layer_desc.4">Push · WhatsApp Business (botones de aprobación inline) · Email</div></div>
+<div class="layer-badge badge-saaf">SAAF · MVP</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">6</div>
+<div class="layer-bar">
+<div><div class="layer-name" data-i18n="saaf.layer_name.5">Motor de aprendizaje</div><div class="layer-desc" data-i18n="saaf.layer_desc.5">Resultados reales + criterio del EM retroalimentan al agente · mejora continua</div></div>
+<div class="layer-badge badge-saaf-ext">SAAF · Iter. 2</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">7</div>
+<div class="layer-bar highlight">
+<div><div class="layer-name" data-i18n="saaf.layer_name.6">Agente publicador</div><div class="layer-desc" data-i18n="saaf.layer_desc.6">Construye el payload · publica vía API · monitor de anomalías en tiempo real</div></div>
+<div class="layer-badge badge-saaf">SAAF · MVP</div>
+</div>
+</div>
+<div class="layer-row">
+<div class="layer-num">8</div>
+<div class="layer-bar built">
+<div><div class="layer-name" data-i18n="saaf.layer_name.7">Plataforma Superlikers</div><div class="layer-desc" data-i18n="saaf.layer_desc.7">Motor de gamificación · apps de meseros · API endpoints de configuración de retos</div></div>
+<div class="layer-badge badge-built">Ya en producción ✓</div>
+</div>
+</div>
+</div>
+<div class="callout" data-i18n="saaf.callout.1" style="margin-top:32px;">
+<strong>Por qué esto importa para inversionistas:</strong> La conexión al POS de HOT en tiempo real está en producción. Los endpoints de configuración de retos existen. El motor de gamificación opera con meseros reales. SAAF se construye <em>encima</em> de esa infraestructura — el riesgo técnico ya fue mitigado.
+  </div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 04 JERARQUÍA DE AGENTES -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.3">04 · Jerarquía de agentes</div>
+<h2 class="section-title" data-i18n="saaf.section_title.3">Un agente por nivel. Todos proponen. El admin siempre decide.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.3">La arquitectura multi-agente de SAAF espeja la jerarquía real del negocio. No hay un solo agente genérico — hay instancias específicas que entienden el contexto de cada nivel.</p>
+<div class="agents-diagram">
+<div class="agent-level">
+<div class="agent-level-label" data-i18n="saaf.level_label.brand">Nivel marca</div>
+<div class="agent-chips">
+<div class="agent-chip brand" data-i18n="saaf.agent_chip.brand1">Agente de Marca — Coca-Cola Colombia</div>
+<div class="agent-chip brand" data-i18n="saaf.agent_chip.brand2">Agente de Marca CPG — por cada marca en OXXO</div>
+</div>
+</div>
+<div class="connector"><div class="connector-line"></div><div class="connector-label" data-i18n="saaf.connector.network">propone retos para toda la red</div></div>
+<div class="agent-level">
+<div class="agent-level-label" data-i18n="saaf.level_label.chain">Nivel cadena</div>
+<div class="agent-chips">
+<div class="agent-chip chain" data-i18n="saaf.agent_chip.chain1">Agente de Cadena — HOT Restaurantes</div>
+<div class="agent-chip chain" data-i18n="saaf.agent_chip.chain2">Agente OXXO — operador central</div>
+</div>
+</div>
+<div class="connector"><div class="connector-line"></div><div class="connector-label" data-i18n="saaf.connector.branches">propone retos para sus sucursales</div></div>
+<div class="agent-level">
+<div class="agent-level-label" data-i18n="saaf.level_label.venue">Nivel sucursal (veto final siempre aquí)</div>
+<div class="agent-chips">
+<div class="agent-chip venue" data-i18n="saaf.agent_chip.venue1">Agente de Sucursal — Restaurante 1</div>
+<div class="agent-chip venue" data-i18n="saaf.agent_chip.venue2">Agente de Sucursal — Restaurante 2</div>
+<div class="agent-chip venue" data-i18n="saaf.agent_chip.venueN">Agente de Sucursal — Restaurante N</div>
+<div class="agent-chip venue" style="opacity:.5;font-size:12px;" data-i18n="saaf.agent_chip.parallel">× 5,000 instancias en paralelo</div>
+</div>
+</div>
+</div>
+<p style="font-size:14px;color:var(--text2);margin:24px 0 16px;" data-i18n="saaf.flow_intro.0">El flujo de aprobación para retos de marca:</p>
+<div class="flow">
+<div class="flow-step active"><strong data-i18n="saaf.flow_step.0a">Agente</strong><span data-i18n="saaf.flow_step.0b">Genera propuesta</span><div class="flow-note" data-i18n="saaf.flow_step.0c">Proactivo</div></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><strong>EM Superlikers</strong><span data-i18n="saaf.flow_step.1">Revisa la parrilla</span></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><strong>Coca-Cola</strong><span data-i18n="saaf.flow_step.2">Aprueba primero</span></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step active"><strong data-i18n="saaf.flow_step.3a">Admin sucursal</strong><span data-i18n="saaf.flow_step.3b">Veto final (24h)</span><div class="flow-note" data-i18n="saaf.flow_step.3c">Silencio = publica</div></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><strong data-i18n="saaf.flow_step.4a">Plataforma</strong><span data-i18n="saaf.flow_step.4b">Reto live para meseros</span></div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 05 EL CAMINO A 1M -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.4">05 · De 1 a 1,000,000</div>
+<h2 class="section-title" data-i18n="saaf.section_title.4">SAAF es la diferencia entre una promesa y un plan creíble.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.4">Sin SAAF, el camino a 1M de restaurantes requeriría un ejército de Engagement Managers. Con SAAF, la escala es una consecuencia arquitectónica — no un problema operativo.</p>
+<div class="scale-chart">
+<div class="scale-row">
+<div class="tl-year-col" style="padding:0;"><div class="tl-year">2026</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.year1">Año 1</div></div>
+<div class="scale-bar-wrap"><div class="scale-bar b1" data-i18n="saaf.scale_bar.0">23 → 10K</div></div>
+<div class="scale-arr">$24M ARR<div class="scale-saaf-note" data-i18n="saaf.scale_note.0">◆ SAAF MVP live</div></div>
+</div>
+<div class="scale-row">
+<div class="tl-year-col" style="padding:0;"><div class="tl-year">2027</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.year2_a">Año 2</div></div>
+<div class="scale-bar-wrap"><div class="scale-bar b2" data-i18n="saaf.scale_bar.1">50K restaurantes</div></div>
+<div class="scale-arr">$120M ARR</div>
+</div>
+<div class="scale-row">
+<div class="tl-year-col" style="padding:0;"><div class="tl-year">2028</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.year3">Año 3</div></div>
+<div class="scale-bar-wrap"><div class="scale-bar b3" data-i18n="saaf.scale_bar.2">200K restaurantes</div></div>
+<div class="scale-arr">$480M ARR<div class="scale-saaf-note" data-i18n="saaf.scale_note.1">◆ SAAF aprende de 200K retos/mes</div></div>
+</div>
+<div class="scale-row">
+<div class="tl-year-col" style="padding:0;"><div class="tl-year">2029</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.year4">Año 4</div></div>
+<div class="scale-bar-wrap"><div class="scale-bar b4" data-i18n="saaf.scale_bar.3">500K restaurantes</div></div>
+<div class="scale-arr">$1.2B ARR</div>
+</div>
+<div class="scale-row">
+<div class="tl-year-col" style="padding:0;"><div class="tl-year">2031</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.year5">Año 5</div></div>
+<div class="scale-bar-wrap"><div class="scale-bar b5" data-i18n="saaf.scale_bar.4">1,000,000 restaurantes</div></div>
+<div class="scale-arr">$2.4B ARR<div class="scale-saaf-note" data-i18n="saaf.scale_note.2">◆ PLG + 500 socios + marcas globales</div></div>
+</div>
+</div>
+<p style="font-size:11px;color:var(--text3);margin-top:-16px;margin-bottom:32px;" data-i18n="saaf.scale_footnote.0">* ACV promedio de USD $200/mes por restaurante (SaaS + Super Monedas). 1M restaurantes = ~7% del mercado global.</p>
+<div class="timeline">
+<div class="tl-item">
+<div class="tl-year-col"><div class="tl-year">2026</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.13weeks">13 semanas</div></div>
+<div class="tl-body active">
+<div class="tl-target" data-i18n="saaf.tl_target.0">MVP de SAAF en producción</div>
+<div class="tl-sub" data-i18n="saaf.tl_sub.0">Colombia · HOT Restaurantes · 23 sucursales</div>
+<ul class="tl-items">
+<li class="saaf" data-i18n="saaf.tl_li.0">Agente Proponente generando parrilla batch</li>
+<li class="saaf" data-i18n="saaf.tl_li.1">Motor de aprobación Flujo A y B live</li>
+<li class="saaf" data-i18n="saaf.tl_li.2">Agente Publicador integrado con plataforma</li>
+<li data-i18n="saaf.tl_li.3">Interfaz de aprobación para admin y Coca-Cola</li>
+<li data-i18n="saaf.tl_li.4">Costo de inferencia: ~$12–20 USD/mes (23 sucursales)</li>
+<li data-i18n="saaf.tl_li.5">Equipo: 4 ingenieros a tiempo completo</li>
+</ul>
+</div>
+</div>
+<div class="tl-item">
+<div class="tl-year-col"><div class="tl-year">2026</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.q4">Q4</div></div>
+<div class="tl-body">
+<div class="tl-target" data-i18n="saaf.tl_target.1">Validación con Coca-Cola Colombia</div>
+<div class="tl-sub" data-i18n="saaf.tl_sub.1">Argumento para los 5,000 restaurantes</div>
+<ul class="tl-items">
+<li data-i18n="saaf.tl_li.6">Parrilla autónoma operando en las 23 sucursales</li>
+<li data-i18n="saaf.tl_li.7">Tasa de aprobación EM ≥ 70% sin edición</li>
+<li class="saaf" data-i18n="saaf.tl_li.8">Monitor de anomalías y motor de aprendizaje</li>
+<li data-i18n="saaf.tl_li.9">Pipeline México + Perú abierto</li>
+</ul>
+</div>
+</div>
+<div class="tl-item">
+<div class="tl-year-col"><div class="tl-year">2027</div><div class="tl-sublabel" data-i18n="saaf.tl_sublabel.year2_b">Año 2</div></div>
+<div class="tl-body">
+<div class="tl-target" data-i18n="saaf.tl_target.2">Escala a Coca-Cola completo + OXXO</div>
+<div class="tl-sub" data-i18n="saaf.tl_sub.2">Colombia · México · Perú · OXXO 28K tiendas</div>
+<ul class="tl-items">
+<li class="saaf" data-i18n="saaf.tl_li.10">SAAF en paralelo para múltiples ecosistemas</li>
+<li class="saaf" data-i18n="saaf.tl_li.11">Agente aprende de millones de retos completados</li>
+<li data-i18n="saaf.tl_li.12">50+ conectores POS certificados</li>
+<li data-i18n="saaf.tl_li.13">Costo inferencia: ~$2,500–4,000 USD/mes (5K restaurantes)</li>
+</ul>
+</div>
+</div>
+<div class="tl-item">
+<div class="tl-year-col"><div class="tl-year">2028+</div><div class="tl-sublabel" data-i18n="saaf.tl_year.2028plus">Años 3–5</div></div>
+<div class="tl-body">
+<div class="tl-target" data-i18n="saaf.tl_target.3">SAAF como ventaja competitiva global</div>
+<div class="tl-sub" data-i18n="saaf.tl_sub.3">USA · Brasil · España · Europa · Asia Pacífico</div>
+<ul class="tl-items">
+<li class="saaf" data-i18n="saaf.tl_li.14">500+ socios regionales usando SAAF como base</li>
+<li class="saaf" data-i18n="saaf.tl_li.15">Marcas globales (Heineken, Diageo, Nestlé) sobre SAAF</li>
+<li data-i18n="saaf.tl_li.16">PLG como motor principal de adquisición</li>
+<li data-i18n="saaf.tl_li.17">1M restaurantes sin crecimiento proporcional del equipo</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 06 EL MOAT -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.5">06 · La ventaja competitiva</div>
+<h2 class="section-title" data-i18n="saaf.section_title.5">El moat que no se puede copiar fácilmente.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.5">SAAF no es solo un sistema de automatización. Es un volante que gira más rápido con cada restaurante que se incorpora. La data de 1M de restaurantes hace al agente exponencialmente más preciso que el de cualquier competidor que empiece desde cero.</p>
+<div class="card-grid">
+<div class="card gold">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.4">Ventaja 1 · Data flywheel</div>
+<div class="card-title" data-i18n="saaf.card_title.4">El agente mejora con escala</div>
+<div class="card-body" data-i18n="saaf.card_body.4">Cada reto publicado genera señales de aprendizaje. Con 1M de restaurantes, SAAF tiene acceso a patrones de comportamiento de 50M de meseros globalmente. Ningún competidor puede replicar esa base de datos sin años de operación.</div>
+</div>
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.5">Ventaja 2 · Integración profunda</div>
+<div class="card-title" data-i18n="saaf.card_title.5">El POS ya está conectado</div>
+<div class="card-body" data-i18n="saaf.card_body.5">La conexión al POS de HOT en tiempo real ya opera en producción. Replicar esa integración en 50+ sistemas de POS globales requiere años de trabajo técnico y acuerdos comerciales que Master Waiters ya está construyendo.</div>
+</div>
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.6">Ventaja 3 · Autonomía con control</div>
+<div class="card-title" data-i18n="saaf.card_title.6">Diseño que respeta la autonomía del cliente</div>
+<div class="card-body" data-i18n="saaf.card_body.6">El veto del administrador de sucursal no es una concesión — es el diferenciador que HOT Restaurantes exige para escalar. Los competidores que ofrezcan automatización sin control perderán a los operadores más grandes.</div>
+</div>
+<div class="card gold">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.7">Ventaja 4 · Arquitectura genérica</div>
+<div class="card-title" data-i18n="saaf.card_title.7">Un sistema, infinitos ecosistemas</div>
+<div class="card-body" data-i18n="saaf.card_body.7">SAAF no está hardcodeado para restaurantes. La misma arquitectura sirve a OXXO Engage (28K tiendas), clientes corporativos y cualquier ecosistema gamificado. Cada cliente nuevo fortalece el sistema para todos los demás.</div>
+</div>
+</div>
+<div class="quote">
+<div class="quote-text" data-i18n="saaf.quote_text.0">"La promesa de Superlikers siempre fue que más clientes no debería significar proporcionalmente más equipo. SAAF es lo que hace esa promesa real."</div>
+<div class="quote-attr" data-i18n="saaf.quote_attr.0">— Luis Alberto Del Castillo Cadavid, Fundador y CEO, Superlikers</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 07 COSTOS Y STACK -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.6">07 · Stack tecnológico y costos</div>
+<h2 class="section-title" data-i18n="saaf.section_title.6">Costos de inferencia manejables incluso a escala completa.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.6">El stack tecnológico fue seleccionado para operar de forma asíncrona desde el principio — la arquitectura que funciona a 23 sucursales funciona a 5,000 sin cambios estructurales.</p>
+<div class="card-grid" style="margin-bottom:24px;">
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.llm">LLM principal</div>
+<div class="card-title" data-i18n="saaf.card_title.8">Claude Sonnet (Anthropic)</div>
+<div class="card-body" data-i18n="saaf.card_body.8">200K tokens de contexto — suficiente para pasar 12+ meses de POS + instrucciones en una sola llamada. Español excelente. Razonamiento estructurado consistente para optimización de presupuesto.</div>
+</div>
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.card_eyebrow.infra">Infraestructura</div>
+<div class="card-title" data-i18n="saaf.card_title.9">AWS · Python / FastAPI</div>
+<div class="card-body" data-i18n="saaf.card_body.9">Step Functions para el flujo de aprobación configurable por cliente. Lambda + Batch para generación en paralelo a escala. SQS para desacoplar generación de procesamiento. RDS PostgreSQL para estado y configuración.</div>
+</div>
+</div>
+<table class="cost-table">
+<thead>
+<tr><th data-i18n="saaf.cost_th.0">Escenario</th><th data-i18n="saaf.cost_th.1">Restaurantes</th><th data-i18n="saaf.cost_th.2">Costo inferencia / mes</th><th data-i18n="saaf.cost_th.3">ARR proyectado</th><th data-i18n="saaf.cost_th.4">Ratio costo/ingreso</th></tr>
+</thead>
+<tbody>
+<tr><td data-i18n="saaf.cost_row.0">Piloto HOT (hoy)</td><td>23</td><td>~$12–20 USD</td><td>$55K</td><td>&lt;0.04%</td></tr>
+<tr><td>Coca-Cola Colombia</td><td>5,000</td><td>~$2,500–4,000 USD</td><td>$12M</td><td>&lt;0.04%</td></tr>
+<tr><td data-i18n="saaf.cost_row.1">Año 1 (10K restaurantes)</td><td>10,000</td><td>~$5,000–8,000 USD</td><td>$24M</td><td>&lt;0.04%</td></tr>
+<tr><td data-i18n="saaf.cost_row.2">Año 5 (1M restaurantes)</td><td>1,000,000</td><td>~$500K–800K USD</td><td>$2.4B</td><td>&lt;0.04%</td></tr>
+</tbody>
+</table>
+<p style="font-size:11px;color:var(--text3);margin-top:-8px;" data-i18n="saaf.cost_footnote.0">* El costo de inferencia escala linealmente con restaurantes pero se mantiene por debajo del 0.04% del ARR en todos los escenarios proyectados.</p>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ 08 EL MVP -->
+<div class="section">
+<div class="container">
+<div class="section-eyebrow" data-i18n="saaf.section_eyebrow.7">08 · El MVP que lo demuestra todo</div>
+<h2 class="section-title" data-i18n="saaf.section_title.7">13 semanas para validar el flujo autónomo completo.</h2>
+<p class="section-lead" data-i18n="saaf.section_lead.7">El MVP de SAAF no es una prueba de concepto. Es la demostración operativa que le permite a Superlikers presentarle a Coca-Cola Colombia el argumento técnico para comprometer 5,000 restaurantes.</p>
+<div class="ba-grid">
+<div class="card" style="border-color:var(--border);background:var(--gold-l);">
+<div class="card-eyebrow" data-i18n="saaf.mvp_left_eyebrow.0">Componentes innegociables del MVP</div>
+<div style="font-size:14px;color:var(--text2);line-height:2;" data-i18n="saaf.mvp_left_content.0">
+        ✓ Agente Proponente (parrilla mensual batch)<br>
+        ✓ Motor de aprobación (Flujo A y Flujo B)<br>
+        ✓ Agente Publicador (integración con Superlikers)<br>
+        ✓ Canal de señales cualitativas del restaurante<br>
+        ✓ Interfaz de aprobación admin + Coca-Cola<br>
+        ✓ Canal de notificaciones Push / WhatsApp / Email
+      </div>
+</div>
+<div class="card">
+<div class="card-eyebrow" data-i18n="saaf.mvp_right_eyebrow.0">Lo que el MVP le demuestra a Coca-Cola</div>
+<div style="font-size:14px;color:var(--text2);line-height:2;" data-i18n="saaf.mvp_right_content.0">
+        → El agente entiende el contexto de cada restaurante<br>
+        → El flujo de aprobación respeta la autonomía de HOT<br>
+        → 23 sucursales sin crecimiento del equipo operativo<br>
+        → El modelo escala a 5,000 sin cambios arquitectónicos<br>
+        → Tasa de aprobación del EM ≥ 70% sin edición<br>
+        → Uplift real vs baseline medible en &lt;3 meses
+      </div>
+</div>
+</div>
+<div class="callout" data-i18n="saaf.callout.2">
+<strong>El argumento para la inversión:</strong> El MVP de SAAF cuesta ~$500K en desarrollo (13 semanas, 4 ingenieros). Si funciona en las 23 sucursales de HOT, Coca-Cola Colombia activa 5,000 restaurantes — un contrato de ~$12M ARR. El retorno del MVP es de 24× en el primer año de operación a escala.
+  </div>
+</div>
+</div>
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<div class="footer">
+<div class="container">
+<div class="footer-top">
+<div>
+<div class="footer-brand">Master Waiters · Superlikers</div>
+<div class="footer-contact" data-i18n="saaf.footer_contact.0">
+        Luis Alberto Del Castillo Cadavid<br>
+        Fundador y CEO, Superlikers (2010)<br>
+<a class="__cf_email__" data-cfemail="a5d5d7c0cbd6c4e5d6d0d5c0d7c9cccec0d7d68bc6cac8" href="/cdn-cgi/l/email-protection">[email protected]</a><br>
+        www.superlikers.com
+      </div>
+</div>
+<div class="footer-note" data-i18n="saaf.footer_note.0">
+      Este documento es confidencial y está preparado exclusivamente para inversionistas y aliados estratégicos de Master Waiters. No debe ser reproducido ni distribuido sin autorización expresa de Superlikers SAS.<br><br>
+      Superlikers · SAAF · Abril 2026
+    </div>
+</div>
+<div class="footer-bottom">Master Waiters</div></div></div><script src="lang.js"></script></body></html>

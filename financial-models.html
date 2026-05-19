@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Master Waiters — Financial Models</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&amp;family=Outfit:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0806;--bg2:#131009;--bg3:#1C1710;--bg4:#252018;
+  --gold:#C9A447;--gold2:#E8C96A;
+  --gold-l:rgba(201,164,71,.12);--gold-b:rgba(201,164,71,.22);
+  --text:#EDE9DF;--text2:#A09880;--text3:#5C5648;
+  --border:rgba(201,164,71,.18);--border2:rgba(237,233,224,.07);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-size:15px;line-height:1.65;min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.5;
+}
+.glow-top{
+  position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:500px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(201,164,71,.07) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
+}
+.container{max-width:1000px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+/* Lang toggle */
+.top-bar{
+  position:sticky;top:0;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 24px;
+  background:rgba(10,8,6,.85);
+  backdrop-filter:blur(8px);
+  border-bottom:0.5px solid var(--border2);
+  z-index:5;margin-bottom:24px;
+}
+.top-back{
+  font-size:13px;color:var(--text2);
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.top-back:hover{color:var(--gold);}
+.top-right{display:flex;align-items:center;gap:14px;}
+.lang-toggle{
+  display:flex;gap:2px;
+  background:var(--bg3);border:0.5px solid var(--border2);
+  border-radius:100px;padding:3px;
+}
+.lang-btn{
+  padding:5px 12px;font-size:11px;font-weight:500;
+  color:var(--text3);background:transparent;border:none;
+  cursor:pointer;border-radius:100px;
+  letter-spacing:.05em;font-family:inherit;
+  transition:all .2s;
+}
+.lang-btn.active{background:var(--gold-l);color:var(--gold);}
+.lang-btn:hover:not(.active){color:var(--text2);}
+.logout-btn{
+  padding:5px 12px;font-size:11px;font-weight:500;
+  color:var(--text3);background:transparent;
+  border:0.5px solid var(--border2);
+  cursor:pointer;border-radius:100px;
+  letter-spacing:.05em;font-family:inherit;
+  transition:all .2s;
+}
+.logout-btn:hover{color:var(--text2);border-color:var(--border);}
+
+/* Header */
+header{
+  padding:32px 0 40px;text-align:center;
+  border-bottom:0.5px solid var(--border);
+}
+.header-eyebrow{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;opacity:.85;
+}
+.header-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,5vw,44px);
+  font-weight:500;line-height:1.1;
+  letter-spacing:-.02em;margin-bottom:14px;
+}
+.header-sub{
+  font-size:15px;color:var(--text2);
+  max-width:540px;margin:0 auto;
+  font-weight:300;line-height:1.6;
+}
+
+/* Section label */
+.section-label{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text3);margin:48px 0 20px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-label::after{content:'';flex:1;height:0.5px;background:var(--border2);}
+
+/* Document cards */
+.doc-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.doc-card{
+  background:var(--bg3);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;gap:16px;
+  position:relative;overflow:hidden;
+  transition:border-color .25s,background .2s,transform .2s;
+}
+.doc-card:hover{
+  background:var(--bg4);
+  transform:translateY(-2px);
+}
+.doc-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(201,164,71,.06) 0%,transparent 60%);
+  opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.doc-card:hover::before{opacity:1;}
+.doc-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:var(--gold-l);border:0.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+}
+.doc-eyebrow{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);
+}
+.doc-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  line-height:1.2;color:var(--text);
+  margin-bottom:4px;
+}
+.doc-desc{
+  font-size:13px;color:var(--text2);
+  line-height:1.6;
+}
+.doc-meta{
+  display:flex;gap:14px;flex-wrap:wrap;
+  font-size:11px;color:var(--text3);
+  margin-top:8px;
+  padding-top:14px;
+  border-top:0.5px solid var(--border2);
+}
+.doc-meta-item{display:inline-flex;align-items:center;gap:4px;}
+.doc-meta-item::before{
+  content:'';width:4px;height:4px;border-radius:50%;
+  background:var(--gold);opacity:.6;
+}
+.doc-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--gold);font-size:13px;font-weight:500;
+  margin-top:4px;
+}
+.doc-cta::after{
+  content:'→';
+  transition:transform .2s;
+}
+.doc-card:hover .doc-cta::after{transform:translateX(4px);}
+
+/* Confidentiality notice */
+.notice{
+  background:var(--bg2);
+  border:0.5px solid var(--border2);
+  border-left:2px solid var(--gold);
+  border-radius:0 10px 10px 0;
+  padding:18px 22px;
+  margin:40px 0 20px;
+  font-size:13px;color:var(--text2);
+  line-height:1.65;
+}
+.notice strong{color:var(--text);font-weight:500;}
+
+/* Footer */
+footer{
+  border-top:0.5px solid var(--border2);
+  padding:28px 0;margin-top:48px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;color:var(--gold);
+}
+.footer-contact{font-size:12px;color:var(--text3);line-height:1.7;}
+.footer-note{font-size:11px;color:var(--text3);text-align:right;}
+
+@media(max-width:720px){
+  .doc-grid{grid-template-columns:1fr;}
+  footer{flex-direction:column;text-align:center;}
+  .footer-note{text-align:center;}
+  .top-bar{flex-wrap:wrap;gap:10px;padding:10px 16px;}
+}
+</style>
+</head>
+<body>
+<div class="glow-top"></div>
+
+<div class="top-bar">
+  <a href="index.html" class="top-back" data-fm-i18n="top_back">← Hub</a>
+  <div class="top-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="es" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="logout-btn" onclick="logout()" data-fm-i18n="logout">Salir</button>
+  </div>
+</div>
+
+<div class="container">
+
+<header>
+  <div class="header-eyebrow" data-fm-i18n="eyebrow">Financial Models · Private · Pre-Seed Round 2026</div>
+  <h1 class="header-title" data-fm-i18n="title">Modelos Financieros</h1>
+  <p class="header-sub" data-fm-i18n="sub">Dos vistas complementarias del modelo económico de Master Waiters: el detalle granular (Excel) y la simulación interactiva (sliders en tiempo real).</p>
+</header>
+
+<div class="section-label" data-fm-i18n="section_label">Documentos disponibles</div>
+
+<div class="doc-grid">
+
+  <!-- Excel Financial Model -->
+  <a class="doc-card" href="Modelo_Financiero_Master_Waiters_4_0.xlsx" download>
+    <div class="doc-icon">📊</div>
+    <div>
+      <div class="doc-eyebrow" data-fm-i18n="excel_eyebrow">Modelo Financiero Completo</div>
+      <div class="doc-title" data-fm-i18n="excel_title">Master Waiters · Financial Model 4.0</div>
+      <div class="doc-desc" data-fm-i18n="excel_desc">Modelo financiero completo en Excel: Dashboard, Unit Economics, Escenarios (Pesimista/Base/Optimista), Palancas, Supuestos, Ingresos, Costos Directos, CAC & GTM, OPEX, Estados Financieros y Valoración. 15 hojas interconectadas con fórmulas auditables.</div>
+    </div>
+    <div class="doc-meta">
+      <span class="doc-meta-item" data-fm-i18n="excel_meta_1">15 hojas</span>
+      <span class="doc-meta-item" data-fm-i18n="excel_meta_2">60 meses de proyección</span>
+      <span class="doc-meta-item" data-fm-i18n="excel_meta_3">3 escenarios</span>
+      <span class="doc-meta-item" data-fm-i18n="excel_meta_4">Formato .xlsx</span>
+    </div>
+    <div class="doc-cta" data-fm-i18n="excel_cta">Descargar Excel</div>
+  </a>
+
+  <!-- Interactive Simulator -->
+  <a class="doc-card" href="super_meseros_interactive_model_v2.html" target="_blank">
+    <div class="doc-icon">🎚️</div>
+    <div>
+      <div class="doc-eyebrow" data-fm-i18n="sim_eyebrow">Simulador Interactivo</div>
+      <div class="doc-title" data-fm-i18n="sim_title">Pricing v2.5 · Live Model</div>
+      <div class="doc-desc" data-fm-i18n="sim_desc">Simulador interactivo con sliders para explorar el modelo en tiempo real: mix de segmentos, churn, alianzas estratégicas, Super Monedas, unit economics y valoración. Incluye matriz de sensibilidad y escenarios preconfigurados.</div>
+    </div>
+    <div class="doc-meta">
+      <span class="doc-meta-item" data-fm-i18n="sim_meta_1">+20 sliders</span>
+      <span class="doc-meta-item" data-fm-i18n="sim_meta_2">5 alianzas toggle</span>
+      <span class="doc-meta-item" data-fm-i18n="sim_meta_3">Matriz de sensibilidad</span>
+      <span class="doc-meta-item" data-fm-i18n="sim_meta_4">Abre en pestaña nueva</span>
+    </div>
+    <div class="doc-cta" data-fm-i18n="sim_cta">Abrir simulador</div>
+  </a>
+
+</div>
+
+<div class="notice" data-fm-i18n-html="notice">
+  <strong>Confidencialidad.</strong> El material en esta sección es privado y está compartido únicamente con inversionistas invitados. Los modelos incluyen proyecciones, supuestos comerciales y datos de pipeline que no son públicos. No redistribuir sin autorización escrita.
+</div>
+
+<footer>
+  <div>
+    <div class="footer-brand">Master Waiters</div>
+    <div class="footer-contact">
+      Luis Alberto Del Castillo · Founder &amp; CEO<br/>
+      ladcc@superlikers.com · +57 305 745 4823
+    </div>
+  </div>
+  <div class="footer-note" data-fm-i18n-html="footer_note">
+    Pre-Seed Round · SAFE · Cap $6M Early Bird<br/>
+    Superlikers SAS · iWin SAS
+  </div>
+</footer>
+
+</div>
+
+<script src="investors.js"></script>
+<script src="mw-header.js"></script>
+<script>
+/* ─── AUTH CHECK — requires tier "materials" or higher ─── */
+mwRequireAuth({ requireTier: "materials" });
+
+function logout() {
+  mwClearSession();
+  window.location.href = 'financial-access.html';
+}
+
+/* ─── i18n ─── */
+const FM = {
+  es: {
+    top_back: "← Hub",
+    logout: "Salir",
+    eyebrow: "Financial Models · Privado · Pre-Seed Round 2026",
+    title: "Modelos Financieros",
+    sub: "Dos vistas complementarias del modelo económico de Master Waiters: el detalle granular (Excel) y la simulación interactiva (sliders en tiempo real).",
+    section_label: "Documentos disponibles",
+    excel_eyebrow: "Modelo Financiero Completo",
+    excel_title: "Master Waiters · Financial Model 4.0",
+    excel_desc: "Modelo financiero completo en Excel: Dashboard, Unit Economics, Escenarios (Pesimista/Base/Optimista), Palancas, Supuestos, Ingresos, Costos Directos, CAC & GTM, OPEX, Estados Financieros y Valoración. 15 hojas interconectadas con fórmulas auditables.",
+    excel_meta_1: "15 hojas",
+    excel_meta_2: "60 meses de proyección",
+    excel_meta_3: "3 escenarios",
+    excel_meta_4: "Formato .xlsx",
+    excel_cta: "Descargar Excel",
+    sim_eyebrow: "Simulador Interactivo",
+    sim_title: "Pricing v2.5 · Live Model",
+    sim_desc: "Simulador interactivo con sliders para explorar el modelo en tiempo real: mix de segmentos, churn, alianzas estratégicas, Super Monedas, unit economics y valoración. Incluye matriz de sensibilidad y escenarios preconfigurados.",
+    sim_meta_1: "+20 sliders",
+    sim_meta_2: "5 alianzas toggle",
+    sim_meta_3: "Matriz de sensibilidad",
+    sim_meta_4: "Abre en pestaña nueva",
+    sim_cta: "Abrir simulador",
+    notice: '<strong>Confidencialidad.</strong> El material en esta sección es privado y está compartido únicamente con inversionistas invitados. Los modelos incluyen proyecciones, supuestos comerciales y datos de pipeline que no son públicos. No redistribuir sin autorización escrita.',
+    footer_note: "Pre-Seed Round · SAFE · Cap $6M Early Bird<br/>Superlikers SAS · iWin SAS"
+  },
+  en: {
+    top_back: "← Hub",
+    logout: "Log out",
+    eyebrow: "Financial Models · Private · Pre-Seed Round 2026",
+    title: "Financial Models",
+    sub: "Two complementary views of the Master Waiters economic model: granular detail (Excel) and interactive simulation (real-time sliders).",
+    section_label: "Available documents",
+    excel_eyebrow: "Full Financial Model",
+    excel_title: "Master Waiters · Financial Model 4.0",
+    excel_desc: "Full financial model in Excel: Dashboard, Unit Economics, Scenarios (Pessimistic/Base/Optimistic), Levers, Assumptions, Revenue, Direct Costs, CAC & GTM, OPEX, Financial Statements and Valuation. 15 interconnected sheets with auditable formulas.",
+    excel_meta_1: "15 sheets",
+    excel_meta_2: "60-month projection",
+    excel_meta_3: "3 scenarios",
+    excel_meta_4: ".xlsx format",
+    excel_cta: "Download Excel",
+    sim_eyebrow: "Interactive Simulator",
+    sim_title: "Pricing v2.5 · Live Model",
+    sim_desc: "Interactive simulator with sliders to explore the model in real time: segment mix, churn, strategic alliances, Super Monedas, unit economics and valuation. Includes sensitivity matrix and preconfigured scenarios.",
+    sim_meta_1: "+20 sliders",
+    sim_meta_2: "5 alliance toggles",
+    sim_meta_3: "Sensitivity matrix",
+    sim_meta_4: "Opens in new tab",
+    sim_cta: "Open simulator",
+    notice: '<strong>Confidentiality.</strong> Material in this section is private and shared only with invited investors. The models include projections, commercial assumptions and pipeline data that are not public. Do not redistribute without written authorization.',
+    footer_note: "Pre-Seed Round · SAFE · Cap $6M Early Bird<br/>Superlikers SAS · iWin SAS"
+  }
+};
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang)
+  );
+  document.querySelectorAll('[data-fm-i18n]').forEach(el => {
+    const key = el.dataset.fmI18n;
+    if (FM[lang][key]) el.textContent = FM[lang][key];
+  });
+  document.querySelectorAll('[data-fm-i18n-html]').forEach(el => {
+    const key = el.dataset.fmI18nHtml;
+    if (FM[lang][key]) el.innerHTML = FM[lang][key];
+  });
+  localStorage.setItem('mw_lang', lang);
+  document.documentElement.lang = lang;
+}
+
+const savedLang = localStorage.getItem('mw_lang') || 'es';
+if (savedLang !== 'es') setLang(savedLang);
+</script>
+</body>
+</html>

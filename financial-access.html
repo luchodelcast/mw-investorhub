@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Master Waiters — Private Access</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&amp;family=Outfit:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0806;--bg2:#131009;--bg3:#1C1710;--bg4:#252018;
+  --gold:#C9A447;--gold2:#E8C96A;
+  --gold-l:rgba(201,164,71,.12);--gold-b:rgba(201,164,71,.22);
+  --text:#EDE9DF;--text2:#A09880;--text3:#5C5648;
+  --border:rgba(201,164,71,.18);--border2:rgba(237,233,224,.07);
+  --err:#D46B5A;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-size:15px;line-height:1.65;min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.5;
+}
+.glow{
+  position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:500px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(201,164,71,.08) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
+}
+.lang-toggle{
+  position:fixed;top:20px;right:24px;
+  display:flex;gap:2px;z-index:10;
+  background:var(--bg3);border:0.5px solid var(--border2);
+  border-radius:100px;padding:3px;
+}
+.lang-btn{
+  padding:5px 12px;font-size:11px;font-weight:500;
+  color:var(--text3);background:transparent;border:none;
+  cursor:pointer;border-radius:100px;
+  letter-spacing:.05em;font-family:inherit;transition:all .2s;
+}
+.lang-btn.active{background:var(--gold-l);color:var(--gold);}
+.lang-btn:hover:not(.active){color:var(--text2);}
+.gate-card{
+  max-width:440px;width:100%;
+  background:var(--bg2);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:40px 36px;
+  position:relative;z-index:1;
+  text-align:center;
+}
+.gate-logo{display:inline-flex;align-items:center;gap:12px;margin-bottom:24px;}
+.gate-logo-icon{
+  width:44px;height:44px;
+  background:linear-gradient(135deg,#2A1F0A 0%,#3D2E10 100%);
+  border:0.5px solid var(--border);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:var(--gold);
+}
+.gate-logo-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:24px;font-weight:600;color:var(--text);
+}
+.gate-logo-text em{color:var(--gold);font-style:normal;}
+.gate-eyebrow{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);opacity:.85;margin-bottom:12px;
+}
+.gate-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:500;line-height:1.2;margin-bottom:10px;
+}
+.gate-sub{
+  font-size:14px;color:var(--text2);
+  margin-bottom:28px;line-height:1.55;font-weight:300;
+}
+.gate-form{display:flex;flex-direction:column;gap:10px;}
+.gate-input{
+  width:100%;padding:12px 16px;
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:inherit;font-size:14px;
+  letter-spacing:.04em;transition:border-color .2s;outline:none;
+}
+.gate-input:focus{border-color:var(--gold);}
+.gate-input::placeholder{color:var(--text3);}
+.gate-btn{
+  width:100%;padding:12px 16px;
+  background:var(--gold);
+  border:0.5px solid var(--gold);
+  border-radius:10px;
+  color:var(--bg);
+  font-family:inherit;font-size:14px;font-weight:500;
+  letter-spacing:.04em;cursor:pointer;
+  transition:background .2s,transform .1s;
+}
+.gate-btn:hover{background:var(--gold2);}
+.gate-btn:active{transform:scale(.99);}
+.gate-error{font-size:12px;color:var(--err);margin-top:4px;min-height:16px;letter-spacing:.02em;}
+.gate-success{font-size:12px;color:var(--gold);margin-top:4px;min-height:16px;letter-spacing:.02em;}
+.gate-hint{
+  margin-top:20px;padding-top:20px;
+  border-top:0.5px solid var(--border2);
+  font-size:11px;color:var(--text3);line-height:1.6;
+}
+.gate-hint a{color:var(--gold);text-decoration:none;}
+.gate-hint a:hover{text-decoration:underline;}
+.gate-back{
+  display:inline-block;margin-top:16px;
+  font-size:12px;color:var(--text3);text-decoration:none;
+}
+.gate-back:hover{color:var(--text2);}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<div class="lang-toggle">
+  <button class="lang-btn active" data-lang="es" onclick="setLang('es')">ES</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="gate-card">
+  <div class="gate-logo">
+    <div class="gate-logo-icon">MW</div>
+    <div class="gate-logo-text">Master <em>Waiters</em></div>
+  </div>
+
+  <div class="gate-eyebrow" data-gate-i18n="eyebrow">Acceso Privado · Inversionistas</div>
+  <h1 class="gate-title" data-gate-i18n="title">Zona Privada</h1>
+  <p class="gate-sub" data-gate-i18n="sub">Ingresa la clave de acceso compartida contigo para ver los modelos financieros y, si aplica, tu propuesta personal.</p>
+
+  <form class="gate-form" onsubmit="return checkCredential(event)">
+    <input
+      type="password"
+      class="gate-input"
+      id="gate-pw"
+      placeholder="Clave de acceso"
+      data-gate-i18n-placeholder="placeholder"
+      autocomplete="off"
+      autofocus
+    />
+    <button type="submit" class="gate-btn" data-gate-i18n="btn">Acceder</button>
+    <div class="gate-error" id="gate-err"></div>
+    <div class="gate-success" id="gate-ok"></div>
+  </form>
+
+  <div class="gate-hint" data-gate-i18n-html="hint">
+    ¿No tienes la clave? Escribe a <a href="mailto:luis@superlikers.com">luis@superlikers.com</a> solicitando acceso.
+  </div>
+
+  <a href="index.html" class="gate-back" data-gate-i18n="back">← Volver al Hub</a>
+</div>
+
+<script src="investors.js"></script>
+<script>
+const G = {
+  es: {
+    eyebrow: "Acceso Privado · Inversionistas",
+    title: "Zona Privada",
+    sub: "Ingresa la clave de acceso compartida contigo para ver los modelos financieros y, si aplica, tu propuesta personal.",
+    placeholder: "Clave de acceso",
+    btn: "Acceder",
+    hint: '¿No tienes la clave? Escribe a <a href="mailto:luis@superlikers.com">luis@superlikers.com</a> solicitando acceso.',
+    back: "← Volver al Hub",
+    err: "Clave incorrecta o expirada",
+    ok_personal: "Bienvenido. Redirigiendo a tu propuesta…",
+    ok_general: "Bienvenido. Redirigiendo a los modelos financieros…",
+    ok_intro: "Bienvenido. Accediendo al Hub…"
+  },
+  en: {
+    eyebrow: "Private Access · Investors",
+    title: "Private Zone",
+    sub: "Enter the access key shared with you to view the financial models and, if applicable, your personal proposal.",
+    placeholder: "Access key",
+    btn: "Enter",
+    hint: 'Don\'t have the key? Write to <a href="mailto:luis@superlikers.com">luis@superlikers.com</a> to request access.',
+    back: "← Back to Hub",
+    err: "Incorrect or expired key",
+    ok_personal: "Welcome. Redirecting to your proposal…",
+    ok_general: "Welcome. Redirecting to the financial models…",
+    ok_intro: "Welcome. Entering the Hub…"
+  }
+};
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang)
+  );
+  document.querySelectorAll('[data-gate-i18n]').forEach(el => {
+    const key = el.dataset.gateI18n;
+    if (G[lang][key]) el.textContent = G[lang][key];
+  });
+  document.querySelectorAll('[data-gate-i18n-html]').forEach(el => {
+    const key = el.dataset.gateI18nHtml;
+    if (G[lang][key]) el.innerHTML = G[lang][key];
+  });
+  document.querySelectorAll('[data-gate-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.gateI18nPlaceholder;
+    if (G[lang][key]) el.placeholder = G[lang][key];
+  });
+  localStorage.setItem('mw_lang', lang);
+  document.documentElement.lang = lang;
+}
+
+const savedLang = localStorage.getItem('mw_lang') || 'es';
+if (savedLang !== 'es') setLang(savedLang);
+
+function checkCredential(ev) {
+  ev.preventDefault();
+  const lang = localStorage.getItem('mw_lang') || 'es';
+  const pw = document.getElementById('gate-pw').value;
+  const errEl = document.getElementById('gate-err');
+  const okEl  = document.getElementById('gate-ok');
+
+  const investor = mwValidateCredential(pw);
+
+  if (!investor) {
+    errEl.textContent = G[lang].err;
+    okEl.textContent = '';
+    document.getElementById('gate-pw').value = '';
+    return false;
+  }
+
+  mwCreateSession(investor);
+  errEl.textContent = '';
+
+  /* Redirect intelligently based on tier and personal proposal */
+  const destination = mwResolveDestination(investor);
+  okEl.textContent = destination.message ? G[lang][destination.message] : G[lang].ok_general;
+  setTimeout(() => { window.location.href = destination.url; }, 600);
+  return false;
+}
+
+/**
+ * Resolve where a user should land based on their tier and personal status.
+ * - If they have a personal proposal: always go there first
+ * - tier "intro": Hub base only (Layer 1) - they don't have access to materials
+ * - tier "materials" or higher: Financial Models (Layer 2)
+ */
+function mwResolveDestination(session) {
+  if (session.personal) {
+    return { url: session.personal, message: "ok_personal" };
+  }
+  if (mwHasTier(session, "materials")) {
+    return { url: "financial-models.html", message: "ok_general" };
+  }
+  /* tier "intro" — they only get the public Hub */
+  return { url: "index.html", message: "ok_intro" };
+}
+
+/* If already authenticated AND has materials+ tier or personal, skip the gate.
+   Users with only "intro" tier stay on the form so they can enter a higher credential. */
+(function skipIfLoggedIn() {
+  const session = mwGetSession();
+  if (!session) return;
+  /* Only skip the gate if the user has something better than intro tier */
+  const hasUpgradedAccess = session.personal || mwHasTier(session, "materials");
+  if (!hasUpgradedAccess) return;
+  const destination = mwResolveDestination(session);
+  window.location.href = destination.url;
+})();
+</script>
+</body>
+</html>
