@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html data-page="hub" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="v14-fase1-autodeploy-validated" name="x-mw-deploy"/>
+<title>Master Waiters — Investor Hub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Outfit:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0806;
+  --bg2:#131009;
+  --bg3:#1C1710;
+  --bg4:#252018;
+  --gold:#C9A447;
+  --gold2:#E8C96A;
+  --gold-l:rgba(201,164,71,.12);
+  --gold-b:rgba(201,164,71,.22);
+  --text:#EDE9DF;
+  --text2:#A09880;
+  --text3:#5C5648;
+  --border:rgba(201,164,71,.18);
+  --border2:rgba(237,233,224,.07);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-size:15px;
+  line-height:1.65;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.5;
+}
+
+/* ── RADIAL GLOW ── */
+.glow-top{
+  position:fixed;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:500px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(201,164,71,.07) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
+}
+
+.container{max-width:1000px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+/* ── HEADER ── */
+header{
+  padding:56px 0 40px;
+  text-align:center;
+  border-bottom:0.5px solid var(--border);
+  position:relative;
+}
+.logo-mark{
+  display:inline-flex;align-items:center;gap:14px;
+  margin-bottom:28px;
+}
+.logo-icon{
+  width:52px;height:52px;
+  background:linear-gradient(135deg,#2A1F0A 0%,#3D2E10 100%);
+  border:0.5px solid var(--border);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  color:var(--gold);
+  letter-spacing:-.02em;
+}
+.logo-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:600;
+  color:var(--text);
+  letter-spacing:-.01em;
+  line-height:1;
+}
+.logo-text em{color:var(--gold);font-style:normal;}
+.header-eyebrow{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;opacity:.85;
+}
+.header-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,6vw,56px);
+  font-weight:500;
+  line-height:1.1;
+  letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+.header-sub{
+  font-size:16px;color:var(--text2);
+  max-width:500px;margin:0 auto;
+  font-weight:300;line-height:1.6;
+}
+
+/* ── TRACTION BAR ── */
+.traction{
+  display:flex;justify-content:center;gap:0;
+  border:0.5px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  margin:32px 0 0;
+}
+.traction-item{
+  flex:1;padding:14px 12px;text-align:center;
+  border-right:0.5px solid var(--border);
+  background:var(--bg2);
+}
+.traction-item:last-child{border-right:none;}
+.traction-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:600;
+  color:var(--gold);line-height:1;
+  margin-bottom:4px;
+}
+.traction-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;}
+
+/* ── SECTION LABEL ── */
+.section-label{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text3);margin:48px 0 20px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-label::after{content:'';flex:1;height:0.5px;background:var(--border2);}
+
+/* ── CARDS GRID ── */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.card{
+  background:var(--bg3);
+  border:0.5px solid var(--border2);
+  border-radius:14px;
+  padding:22px 20px;
+  text-decoration:none;
+  color:inherit;
+  display:flex;flex-direction:column;gap:12px;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:border-color .25s,transform .2s,background .2s;
+}
+.card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(201,164,71,.06) 0%,transparent 60%);
+  opacity:0;transition:opacity .25s;
+  pointer-events:none;
+}
+.card:hover{
+  border-color:var(--border);
+  background:var(--bg4);
+  transform:translateY(-2px);
+}
+.card:hover::before{opacity:1;}
+.card.featured{
+  border-color:var(--border);
+  background:linear-gradient(135deg,#1C1710 0%,#201810 100%);
+}
+.card.featured::after{
+  content:'★ Principal';
+  position:absolute;top:12px;right:12px;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);padding:3px 8px;
+  background:var(--gold-l);border:0.5px solid var(--border);
+  border-radius:100px;
+}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;}
+.card-num{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--gold-l);border:0.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-weight:600;color:var(--gold);
+  flex-shrink:0;
+}
+.card-type{
+  font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);padding:3px 8px;
+  border:0.5px solid var(--border2);border-radius:100px;
+  margin-top:2px;
+}
+.card-type.live{color:var(--gold);border-color:var(--border);}
+.card-body{flex:1;}
+.card-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;
+  line-height:1.2;margin-bottom:6px;color:var(--text);
+}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+.card-arrow{
+  align-self:flex-end;
+  color:var(--text3);font-size:18px;
+  transition:color .2s,transform .2s;
+  margin-top:8px;
+}
+.card:hover .card-arrow{color:var(--gold);transform:translateX(4px) translateY(-4px);}
+
+/* ── CARD WIDE (full row) ── */
+.card-wide{
+  grid-column:1 / -1;
+  flex-direction:row;align-items:center;gap:20px;
+}
+.card-wide .card-body{flex:1;}
+.card-wide .card-arrow{align-self:center;margin-top:0;}
+
+/* ── INTERACTIVE TOOLS ── */
+.tools-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.tool-card{
+  background:var(--bg2);
+  border:0.5px solid var(--border2);
+  border-radius:14px;
+  padding:20px;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;gap:10px;
+  transition:border-color .25s,transform .2s,background .2s;
+  position:relative;overflow:hidden;
+}
+.tool-card:hover{
+  border-color:var(--border);background:var(--bg3);
+  transform:translateY(-2px);
+}
+.tool-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  background:var(--gold-l);border:0.5px solid var(--border);
+  flex-shrink:0;
+}
+.tool-title{
+  font-size:14px;font-weight:500;
+  color:var(--text);line-height:1.3;
+}
+.tool-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+.tool-badge{
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);display:inline-flex;align-items:center;gap:4px;
+}
+.tool-badge::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--gold);animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── QUOTE ── */
+.quote{
+  border-left:2px solid var(--gold);
+  padding:18px 22px;
+  background:var(--gold-l);
+  border-radius:0 10px 10px 0;
+  margin:40px 0;
+}
+.quote-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;line-height:1.55;
+  color:var(--text);font-style:italic;
+  margin-bottom:8px;
+}
+.quote-attr{font-size:12px;color:var(--text3);}
+
+/* ── FOOTER ── */
+footer{
+  border-top:0.5px solid var(--border2);
+  padding:28px 0;margin-top:60px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--gold);
+}
+.footer-contact{font-size:13px;color:var(--text3);line-height:1.8;}
+.footer-note{font-size:11px;color:var(--text3);text-align:right;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .6s ease both;}
+.fade-up:nth-child(1){animation-delay:.05s}
+.fade-up:nth-child(2){animation-delay:.1s}
+.fade-up:nth-child(3){animation-delay:.15s}
+.fade-up:nth-child(4){animation-delay:.2s}
+.fade-up:nth-child(5){animation-delay:.25s}
+.fade-up:nth-child(6){animation-delay:.3s}
+.fade-up:nth-child(7){animation-delay:.35s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .cards-grid{grid-template-columns:1fr;}
+  .tools-grid{grid-template-columns:1fr;}
+  .card-wide{flex-direction:column;}
+  .traction{flex-wrap:wrap;}
+  .traction-item{flex:1 1 45%;border-bottom:0.5px solid var(--border);}
+  footer{flex-direction:column;text-align:center;}
+  .footer-note{text-align:center;}
+}
+
+/* ─── XGAIGE PILL (header hint) ─── */
+.xg-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-bottom:18px;padding:5px 12px;
+  background:rgba(108,108,255,.08);
+  border:0.5px solid rgba(108,108,255,.25);
+  border-radius:100px;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(237,233,224,.7);font-weight:500;
+  text-decoration:none;
+  transition:background .25s,border-color .25s,color .25s;
+}
+.xg-pill:hover{
+  background:rgba(108,108,255,.15);
+  border-color:rgba(108,108,255,.4);
+  color:#EDE9DF;
+}
+.xg-pill-arrow{
+  font-size:13px;opacity:.7;
+  transition:transform .25s,opacity .25s;
+}
+.xg-pill:hover .xg-pill-arrow{
+  transform:translate(2px,-2px);opacity:1;
+}
+
+/* ─── XGAIGE BRIDGE (post-Fernando section) ─── */
+.xgaige-bridge{
+  --xgb-midnight:#101531;
+  --xgb-midnight-deep:#18172e;
+  --xgb-violet:#594bd8;
+  --xgb-violet-light:#6c6cff;
+  --xgb-cyan:#09ced1;
+  --xgb-lavender:#efeffc;
+  position:relative;
+  margin:48px 0 0;
+  padding:48px 40px 44px;
+  background:linear-gradient(135deg,var(--xgb-midnight) 0%,var(--xgb-midnight-deep) 100%);
+  border:0.5px solid rgba(108,108,255,.22);
+  border-radius:16px;
+  overflow:hidden;text-align:center;
+}
+.xgaige-bridge::before{
+  content:'';position:absolute;
+  top:-40%;right:-15%;width:380px;height:380px;
+  background:radial-gradient(circle,rgba(89,75,216,.18) 0%,transparent 60%);
+  pointer-events:none;
+}
+.xgaige-bridge::after{
+  content:'';position:absolute;
+  bottom:-30%;left:-10%;width:280px;height:280px;
+  background:radial-gradient(circle,rgba(9,206,209,.10) 0%,transparent 60%);
+  pointer-events:none;
+}
+.xgb-eyebrow{
+  position:relative;z-index:1;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--xgb-cyan);font-weight:600;margin-bottom:18px;
+}
+.xgb-title{
+  position:relative;z-index:1;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,3.4vw,38px);
+  font-weight:500;line-height:1.15;letter-spacing:-.01em;
+  color:var(--xgb-lavender);
+  margin-bottom:16px;
+  max-width:640px;margin-left:auto;margin-right:auto;
+}
+.xgb-body{
+  position:relative;z-index:1;
+  font-size:15px;line-height:1.65;
+  color:rgba(239,239,252,.7);
+  max-width:560px;margin:0 auto 28px;font-weight:300;
+}
+.xgb-cta{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 26px;
+  background:var(--xgb-violet);color:var(--xgb-lavender);
+  border:0.5px solid var(--xgb-violet);border-radius:100px;
+  text-decoration:none;font-weight:500;font-size:14px;letter-spacing:.02em;
+  transition:all .25s;
+}
+.xgb-cta:hover{
+  background:var(--xgb-violet-light);
+  border-color:var(--xgb-violet-light);
+  transform:translateY(-1px);
+  box-shadow:0 12px 32px rgba(89,75,216,.35);
+}
+.xgb-cta-arrow{display:inline-block;transition:transform .25s;}
+.xgb-cta:hover .xgb-cta-arrow{transform:translateX(4px);}
+@media(max-width:640px){
+  .xgaige-bridge{padding:36px 24px 34px;margin:36px 0 0;}
+}
+
+</style>
+</head>
+<body>
+<div class="glow-top"></div>
+<div class="container">
+<header>
+<div class="logo-mark">
+<div class="logo-icon">MW</div>
+<div class="logo-text">Master <em>Waiters</em></div>
+</div>
+<a href="https://investorhub.xgaige.com/" class="xg-pill" target="_blank" rel="noopener">
+<span class="xg-pill-text" data-i18n="hub.xg_pill.0">Vertical 01 de XGAIGE</span>
+<span class="xg-pill-arrow">↗</span>
+</a>
+<div class="header-eyebrow" data-i18n="hub.header_eyebrow.0">Pre-Seed Round 2026 · Investor Hub · Confidencial</div>
+<h1 class="header-title" data-i18n="hub.header_title.0">El sistema operativo de la fuerza de ventas más grande del mundo</h1>
+<p class="header-sub" data-i18n="hub.header_sub.0">Una plataforma de gamificación que conecta marcas, restaurantes y meseros — la fuerza de ventas más subutilizada del mundo.</p>
+<div class="traction">
+<div class="traction-item">
+<div class="traction-val">100%</div>
+<div class="traction-label" data-i18n="hub.traction_label.0">Adopción meseros</div>
+</div>
+<div class="traction-item">
+<div class="traction-val">+25%</div>
+<div class="traction-label" data-i18n="hub.traction_label.1">Uplift ventas cat.</div>
+</div>
+<div class="traction-item">
+<div class="traction-val">104%</div>
+<div class="traction-label" data-i18n="hub.traction_label.2">Completación retos</div>
+</div>
+<div class="traction-item">
+<div class="traction-val">$500K</div>
+<div class="traction-label" data-i18n="hub.traction_label.3">Raising · SAFE</div>
+</div>
+<div class="traction-item">
+<div class="traction-val">$6M</div>
+<div class="traction-label" data-i18n="hub.traction_label.4">Cap Early Bird</div>
+</div>
+</div>
+</header>
+<!-- ── DOCUMENTOS ESTRATÉGICOS ── -->
+<div class="section-label" data-i18n="hub.section_label.0">Documentos estratégicos</div>
+<div class="cards-grid">
+<a class="card featured fade-up" href="https://docs.google.com/presentation/d/e/2PACX-1vQk0MvFST33r8IVfK7k69XiYEVLFIzY2m0tEqve7ut8ozRBcuEUwHN4d8SZJNkTGNJWcygLkxHURB4u/pub?start=false&loop=false&delayms=3000" data-i18n-href="hub.deck_url.0" target="_blank" rel="noopener">
+<div class="card-top">
+<div class="card-num">1</div>
+<span class="card-type live" data-i18n="hub.card_type.0">Deck</span>
+</div>
+<div class="card-body">
+<div class="card-title" data-i18n="hub.card_title.0">Investor Deck<br>Master Waiters</div>
+<div class="card-desc" data-i18n="hub.card_desc.0">Visión, problema, solución, tracción, modelo de negocio y oportunidad de inversión.</div>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+<a class="card fade-up" href="master_waiters_expansion_plan_a_5_anos.html" target="_blank">
+<div class="card-top">
+<div class="card-num">2</div>
+<span class="card-type" data-i18n="hub.card_type.1">Estrategia</span>
+</div>
+<div class="card-body">
+<div class="card-title" data-i18n="hub.card_title.1">Plan de Expansión<br>Global · 5 Años</div>
+<div class="card-desc" data-i18n="hub.card_desc.1">De 1 a 1,000,000 de restaurantes. Roadmap 2026–2031, ecosistema de alianzas y modelo SAFE.</div>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+<a class="card fade-up" href="master_waiters_global_tech_strategy.html" target="_blank">
+<div class="card-top">
+<div class="card-num">3</div>
+<span class="card-type" data-i18n="hub.card_type.2">Tecnología</span>
+</div>
+<div class="card-body">
+<div class="card-title" data-i18n="hub.card_title.2">Estrategia<br>Tecnológica Global</div>
+<div class="card-desc" data-i18n="hub.card_desc.2">Arquitectura de escala: apps, landings, SAAF, LMS, modelo de socios y roadmap técnico.</div>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+<a class="card fade-up" href="saaf_master_waiters_investors.html" style="grid-column:1/-1;" target="_blank">
+<div class="card-top" style="margin-bottom:4px;">
+<div class="card-num">4</div>
+<span class="card-type" data-i18n="hub.card_type.3">IA · Moat</span>
+</div>
+<div style="display:flex;gap:20px;align-items:flex-start;">
+<div class="card-body">
+<div class="card-title" data-i18n="hub.card_title.3">SAAF — Superlikers Autonomous Agents Framework</div>
+<div class="card-desc" data-i18n="hub.card_desc.3">El motor de IA que hace posible operar 1,000,000 de restaurantes con un equipo pequeño. Arquitectura de 8 capas, agentes proponentes, motor de aprobación y aprendizaje automático. El moat tecnológico de Master Waiters.</div>
+</div>
+<div class="card-arrow" style="align-self:center;flex-shrink:0;">↗</div>
+</div>
+</a>
+</div>
+<!-- ── MODELOS FINANCIEROS (GATED) ── -->
+<div class="section-label" data-i18n="hub.section_label.2">Modelos financieros</div>
+<div class="cards-grid">
+<a class="card card-wide fade-up" href="financial-access.html" style="background:linear-gradient(135deg,#1C1710 0%,#201810 100%);border-color:var(--border);">
+<div class="card-top">
+<div class="card-num">🔒</div>
+<span class="card-type live" data-i18n="hub.card_type.4">Privado</span>
+</div>
+<div class="card-body">
+<div class="card-title" data-i18n="hub.card_title.4">Modelos Financieros<br>Acceso Privado</div>
+<div class="card-desc" data-i18n="hub.card_desc.4">Modelo financiero completo en Excel (15 hojas, 60 meses, 3 escenarios) y simulador interactivo con sliders en tiempo real. Acceso restringido a inversionistas invitados.</div>
+</div>
+<div class="card-arrow">↗</div>
+</a>
+</div>
+<!-- ── HERRAMIENTAS INTERACTIVAS ── -->
+<div class="section-label" data-i18n="hub.section_label.1">Herramientas interactivas</div>
+<div class="tools-grid">
+<a class="tool-card fade-up" href="https://kitsupermeseros.netlify.app/" target="_blank">
+<div class="tool-icon">🎯</div>
+<div>
+<div class="tool-title" data-i18n="hub.tool_title.0">Kit de Entrenamiento<br>Super Meseros</div>
+<div class="tool-desc" data-i18n="hub.tool_desc.0">Material de capacitación para vendedores y equipo comercial.</div>
+</div>
+<div class="tool-badge" data-i18n="hub.tool_badge.0">App en vivo</div>
+</a>
+<a class="tool-card fade-up" href="https://simuladorsm.netlify.app/" target="_blank">
+<div class="tool-icon">📈</div>
+<div>
+<div class="tool-title" data-i18n="hub.tool_title.1">Simulador de ROI<br>Super Meseros</div>
+<div class="tool-desc" data-i18n="hub.tool_desc.1">Calcula el retorno esperado para un restaurante o marca patrocinadora.</div>
+</div>
+<div class="tool-badge" data-i18n="hub.tool_badge.1">App en vivo</div>
+</a>
+<a class="tool-card fade-up" href="https://cotizadorsm.netlify.app/" target="_blank">
+<div class="tool-icon">🧮</div>
+<div>
+<div class="tool-title" data-i18n="hub.tool_title.2">Cotizador<br>Super Meseros</div>
+<div class="tool-desc" data-i18n="hub.tool_desc.2">Propuesta comercial personalizada en tiempo real según tipo y tamaño del negocio.</div>
+</div>
+<div class="tool-badge" data-i18n="hub.tool_badge.2">App en vivo</div>
+</a>
+</div>
+<!-- ── QUOTE ── -->
+<div class="quote">
+<div class="quote-text" data-i18n="hub.quote_text.0">"Cuando empecé a usar Super Meseros nunca imaginé que mi esfuerzo diario me pudiera traer algo más allá de mi salario y mis propinas. Me gané un televisor sin gastar nada de mi bolsillo, simplemente haciendo bien mi trabajo."</div>
+<div class="quote-attr" data-i18n="hub.quote_attr.0">Fernando Dugand · Mesero, HOT Restaurants · Barranquilla, Colombia · 2026</div>
+</div>
+
+<!-- ── XGAIGE BRIDGE ── -->
+<section class="xgaige-bridge fade-up">
+<div class="xgb-eyebrow" data-i18n="hub.xgb_eyebrow.0">Master Waiters es el primer capítulo</div>
+<h2 class="xgb-title" data-i18n="hub.xgb_title.0">Hay más capítulos siendo escritos.</h2>
+<p class="xgb-body" data-i18n="hub.xgb_body.0">Master Waiters es la primera vertical de XGAIGE — un company-builder de ecosistemas gamificados. Pharma Champions y Super Asesoras son los próximos capítulos de la misma tesis.</p>
+<a href="https://investorhub.xgaige.com/" class="xgb-cta" target="_blank" rel="noopener">
+<span data-i18n="hub.xgb_cta.0">Conocer XGAIGE</span>
+<span class="xgb-cta-arrow">→</span>
+</a>
+</section>
+
+<!-- ── PERSONALIZED PROPOSAL BUTTON (shown only if logged-in investor has one) ── -->
+<style>
+#personal-proposal-cta{
+  display:none;
+  margin:32px 0 0;padding:32px 36px;
+  background:linear-gradient(135deg,rgba(201,164,71,.1) 0%,rgba(212,126,63,.06) 100%);
+  border:0.5px solid var(--gold);border-radius:16px;
+  text-align:center;
+  position:relative;overflow:hidden;
+  animation:ppCtaFadeIn 1s ease .3s both;
+}
+#personal-proposal-cta::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at top,rgba(201,164,71,.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+#personal-proposal-cta.visible{display:block;}
+@keyframes ppCtaFadeIn{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+#personal-proposal-cta .pp-label{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;opacity:.9;
+  position:relative;z-index:1;
+}
+#personal-proposal-cta .pp-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(24px,3.2vw,32px);
+  font-weight:500;line-height:1.25;letter-spacing:-.01em;
+  margin-bottom:10px;color:var(--text);
+  position:relative;z-index:1;
+}
+#personal-proposal-cta .pp-title em{color:var(--gold);font-style:italic;}
+#personal-proposal-cta .pp-sub{
+  font-size:14px;color:var(--text2);line-height:1.6;
+  margin-bottom:22px;max-width:460px;margin-left:auto;margin-right:auto;
+  position:relative;z-index:1;
+}
+#personal-proposal-cta .pp-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 26px;
+  background:var(--gold);color:var(--bg);
+  border:0.5px solid var(--gold);border-radius:100px;
+  text-decoration:none;font-weight:500;font-size:14px;
+  letter-spacing:.02em;transition:all .2s;
+  position:relative;z-index:1;
+}
+#personal-proposal-cta .pp-btn:hover{
+  background:#E8C96A;transform:translateY(-1px);
+}
+#personal-proposal-cta .pp-btn::after{content:'→';transition:transform .2s;}
+#personal-proposal-cta .pp-btn:hover::after{transform:translateX(4px);}
+</style>
+<div id="personal-proposal-cta">
+<div class="pp-label" id="pp-label">Personal</div>
+<div class="pp-title" id="pp-title">Hay <em>algo más</em> para ti.</div>
+<div class="pp-sub" id="pp-sub">Una propuesta preparada específicamente contigo en mente.</div>
+<a href="#" class="pp-btn" id="pp-btn">Ver la propuesta</a>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+<div>
+<div class="footer-brand">Master Waiters</div>
+<div class="footer-contact" data-i18n="hub.footer_contact.0">
+        Luis Alberto Del Castillo · Founder &amp; CEO<br>
+<a class="__cf_email__" data-cfemail="08647d617b487b7d786d7a6461636d7a7b266b6765" href="/cdn-cgi/l/email-protection">[email protected]</a> · +57 305 745 4823
+      </div>
+</div>
+<div class="footer-note" data-i18n="hub.footer_note.0">
+      Pre-Seed Round · SAFE · Cap $6M Early Bird<br>
+      Superlikers SAS · iWin S</div></footer></div><script src="lang.js"></script>
+<script src="investors.js"></script>
+<script>
+(function(){
+  if(typeof mwGetSession === 'function' && !mwGetSession()){
+    window.location.replace('index.html');
+  }
+})();
+</script>
+<script src="mw-header.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   Personal proposal reveal — session-based
+   Shows the personal-proposal CTA only if the logged-in investor has one
+   assigned in the registry. Regular invitees (general access) never see it.
+   Anonymous visitors (no session) never see it either.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function revealPersonalProposalIfApplicable(){
+  try {
+    const session = mwGetSession();
+    if (!session || !session.personal) return;
+
+    const cta  = document.getElementById('personal-proposal-cta');
+    const btn  = document.getElementById('pp-btn');
+    const label = document.getElementById('pp-label');
+    if (!cta || !btn) return;
+
+    /* Customize the CTA for the logged-in investor */
+    btn.href = session.personal;
+    /* First name as label — "Diego" from "Diego Parra" */
+    if (session.name && label) {
+      label.textContent = session.name.split(' ')[0];
+    }
+
+    cta.classList.add('visible');
+
+    /* Gentle scroll on first view only */
+    setTimeout(() => {
+      if (!sessionStorage.getItem('mw_ppcta_seen_this_session')) {
+        cta.scrollIntoView({behavior:'smooth', block:'center'});
+        sessionStorage.setItem('mw_ppcta_seen_this_session','1');
+      }
+    }, 700);
+  } catch(e){}
+})();
+</script>
+</body></html>
