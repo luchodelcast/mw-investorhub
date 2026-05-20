@@ -49,9 +49,9 @@
       {
         id: 1, icon: "🍽",
         name: t('l1_name'), subtitle: t('l1_sub'),
-        url: "index.html",
+        url: "hub.html",
         requiredTier: null,
-        pages: ["", "index.html", "index"]
+        pages: ["", "hub.html", "hub", "index.html", "index"]
       },
       {
         id: 2, icon: "🔥",
@@ -368,7 +368,7 @@
     /* Brand with PNG logo */
     const brand = document.createElement('a');
     brand.className = 'mw-header-brand';
-    brand.href = 'index.html';
+    brand.href = 'hub.html';
     brand.innerHTML = `
       <img src="logomw.png" alt="Master Waiters" class="mw-header-logo-img"/>
       <span class="mw-header-tag">${t('tag')}</span>

@@ -206,15 +206,15 @@ function mwRequireAuth(options) {
   options = options || {};
   const session = mwGetSession();
   if (!session) {
-    window.location.href = "financial-access.html";
+    window.location.href = "index.html";
     return null;
   }
   if (options.requireTier && !mwHasTier(session, options.requireTier)) {
-    window.location.href = "index.html";
+    window.location.href = "hub.html";
     return null;
   }
   if (options.requirePersonal && session.personal !== options.requirePersonal) {
-    window.location.href = "index.html";
+    window.location.href = "hub.html";
     return null;
   }
   return session;

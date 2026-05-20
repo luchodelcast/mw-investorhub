@@ -3,6 +3,7 @@
 <html data-page="tech" lang="es">
 <head>
 <meta charset="utf-8"/>
+<script>if(!localStorage.getItem("mw_session"))window.location.replace("index.html");</script>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Master Waiters — Estrategia Tecnológica Global</title>
 <style>
@@ -631,5 +632,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 </div>
 <div class="footer-note" data-i18n="tech.footer_note.0">Superlikers · Master Waiters Global Tech Strategy · Abril 2026 · Confidencial</div>
 </div>
+<script src="investors.js"></script>
+<script>
+(function(){
+  if(typeof mwGetSession === 'function' && !mwGetSession()){
+    window.location.replace('index.html');
+  }
+})();
+</script>
 <script src="lang.js"></script></body>
 </html>

@@ -3,6 +3,7 @@
 <html data-page="saaf" lang="es">
 <head>
 <meta charset="utf-8"/>
+<script>if(!localStorage.getItem("mw_session"))window.location.replace("index.html");</script>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Master Waiters · SAAF · El Motor de la Escala Global</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -610,4 +611,12 @@ h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-
       Superlikers · SAAF · Abril 2026
     </div>
 </div>
-<div class="footer-bottom">Master Waiters</div></div></div><script src="lang.js"></script></body></html>
+<div class="footer-bottom">Master Waiters</div></div></div><script src="investors.js"></script>
+<script>
+(function(){
+  if(typeof mwGetSession === 'function' && !mwGetSession()){
+    window.location.replace('index.html');
+  }
+})();
+</script>
+<script src="lang.js"></script></body></html>
